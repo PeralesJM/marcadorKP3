@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inicio de sesión</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, rgb(25, 25, 50), rgb(50, 50, 100));
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;}
+    .login-container {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 2rem 3rem;
+      border-radius: 25px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;}
+    h2 {
+      margin-bottom: 1.5rem;}
+    input[type="password"], button {
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 10px;
+      box-sizing: border-box;
+      margin-bottom: 1rem;
+      font-size: 1rem;}
+    button {
+      background-color: rgb(25, 200, 150);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.5s ease;}
+    button:hover {
+      background-color: rgb(25, 150, 150);}
+    ::placeholder {
+      color: rgb(175, 175, 175);}
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <h2>Acceso al Panel de Control</h2>
+    <form id="loginForm">
+      <input type="password" id="password" placeholder="Contraseña" required>
+      <button type="submit">Acceder</button>
+    </form>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const password = document.getElementById('password').value;
+      if (password === "1234") {
+        window.location.href = "/index_pc.html?password=" + password;
+      } else {
+        alert("Contraseña incorrecta");
+      }
+    });
+  </script>
+</body>
+</html>

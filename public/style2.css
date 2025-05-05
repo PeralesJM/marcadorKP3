@@ -1,0 +1,130 @@
+/* GENERAL */
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;}
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: linear-gradient(135deg, rgb(25, 25, 50), rgb(50, 50, 75));
+  color: white;}
+#panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2vw;
+  justify-content: space-between;
+  padding: 1vw;
+  height: 100vh;}
+section {
+  flex: 1 1 25vw;
+  background-color: rgb(50, 50, 75);
+  border-radius: 1.5vw;
+  padding: 1vw;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 0.5vw 1vw rgba(0,0,0);}
+
+/* ENCABEZADO EQUIPO */
+.equipo-header {
+  flex: 0 0 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1vw;}
+#nombreEquipoA, #nombreEquipoB {
+  font-size: 3vw;
+  font-weight: bold;
+  color: white;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;}
+
+/* MARCADOR */
+.equipo-marcador {
+  flex: 0 0 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;}
+.marcador-puntos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10vw;
+  font-weight: bold;
+  border: 0.15vw solid white;
+  border-radius: 2vw;
+  padding: 1vw 3vw;
+  outline: 0.3vw solid white;
+  color: rgb(255, 225, 100);}
+.linea {
+  border-top: 0.3vw solid white;
+  margin: 0.3vw 0;}
+
+/* TARJETAS */
+.expulsiones-wrapper {
+  display: flex;
+  flex: 1;
+  gap: 2vw;
+  overflow-y: auto;}
+.expulsiones-equipo, .expulsiones-extra {
+  flex: 1 1 45%; }
+.te {
+  font-size: 1.4vw;}
+.tarjeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1vw;
+  border-radius: 1vw;
+  margin: 0.4vw 0;
+  font-size: 1.4vw;
+  font-weight: bold;
+  color: white;}
+.tarjeta.roja {
+  background-color: rgb(200, 50, 50);}
+.tarjeta.amarilla {
+  background-color: rgb(250, 200, 0);
+  color: black;}
+.tarjeta.verde {
+  background-color: rgb(25, 175, 75);}
+
+/* CRONÓMETROS */
+#cronometro-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;}
+#cronometro-partido {
+  text-align: center;
+  padding: 1vw;}
+#posesion-container {
+  text-align: center;
+  font-size: 2vw;
+  padding: 1vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;}
+#tiempoPartido {
+  font-size: 10vw;
+  font-weight: bold;
+  border: 0.2vw solid white;
+  border-radius: 2vw;
+  padding: 1vw 3vw;
+  outline: 0.3vw solid white;
+  color: rgb(200, 50, 50);}
+#tiempoPosesion {
+  font-size: 10vw;
+  color: rgb(200, 50, 50);
+  border: 0.2vw solid white;
+  border-radius: 2vw;
+  padding: 1vw 3vw;
+  outline: 0.3vw solid white;}
+#tiempo-juego {
+  text-align: center;
+  color: rgb(255, 225, 100);
+  font-size: 3vw;}

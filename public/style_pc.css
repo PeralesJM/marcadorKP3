@@ -1,0 +1,220 @@
+/* APARTADO GENERAL */
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;}
+html, body {
+  background-color: rgb(125, 125, 125);
+  color: black;
+  padding: 0;
+  margin: 0;
+  font-size: 1vw;
+  height: 100%;}
+#panel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1vw;
+  height: 100vh;
+  padding: 1vw;}
+section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(200, 200, 200);
+  padding: 1vw;
+  border-radius: 3vw;
+  overflow: hidden;
+  height: 100%;}
+.equipo-header, .equipo-marcador, .expulsiones-equipo, 
+#cronometro-partido, #posesion-container {
+  flex-shrink: 0;}
+
+/* APARTADO ESTRUCTURA */
+#equipoA-container .equipo-header, #equipoB-container .equipo-header {
+  flex: 0 0 15%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5vw;}
+#equipoA-container .equipo-marcador, #equipoB-container .equipo-marcador {
+  flex: 0 0 40%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;}
+
+/* APARTADO EQUIPOS */
+.equipo-header input {
+  font-size: 3vw;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 2vw;}
+.equipo-marcador {
+  display: flex;
+  flex-direction: column;
+  height: 100%;}
+.marcador-puntos {
+  flex: 0 0 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;}
+.marcador-botones {
+  flex: 0 0 20%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1vw;}
+#resultadoA, #resultadoB {
+  font-size: 12vw;}
+.equipo-marcador button {
+  font-size: 3vw;
+  padding: 0.3vw 0.8vw;
+  border-radius: 1.5vw;
+  margin: 0 1vw;}
+.linea {
+  border-top: 0.2vw solid black;
+  margin: 1vw 0;}
+
+/* APARTADO TARJETAS */
+.expulsiones-equipo h3 {
+  margin: 0.5vw 0;}
+.expulsiones-equipo div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.3vw 0;}
+.expulsiones-equipo span {
+  flex: 1;
+  width: 100%;}
+.expulsiones-equipo button {
+  margin: 0 0.2vw;}
+.tarjeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4vw;
+  border-radius: 2vw;
+  margin: 0.4vw 0;
+  height: 3vw;}
+.tarjeta.verde {
+  background-color: rgb(170, 230, 160);}
+.tarjeta.amarilla {
+  background-color: rgb(255, 245, 160);}
+.tarjeta.roja {
+  background-color: rgb(245, 160, 160);}
+.grupo-botones {
+  display: flex;
+  align-items: center;}
+
+.expulsiones-wrapper {
+  display: flex;
+  width: 100%;
+  overflow-y: auto;}
+.expulsiones-equipo {
+  flex: 0 0 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;}
+.expulsiones-extra {
+  flex: 0 0 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;}
+
+.tarjeta-nombre {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+  margin: 0.6vw 0;
+  padding: 0.6vw 1vw;
+  border-left: 3vw solid rgb(155, 155, 155);
+  background-color:white;
+  border-radius: 1vw;
+  font-size: 0.9vw;
+  box-shadow: 0 0.1vw 0.3vw black;}
+.tarjeta-nombre.roja {
+  border-left-color: rgb(225, 0, 0);}
+.tarjeta-nombre.amarilla {
+  border-left-color: rgb(255, 200, 0);}
+.nombre-tarjeta {
+  flex: 1;
+  font-size: 1vw;
+  border: 0.1vw solid rgb(205,205, 205);
+  border-radius: 0.2vw;}
+.tarjeta-nombre span:last-child {
+  font-family: monospace;}
+
+/* APARTADO CENTRAL */
+#tiempoPartido {
+  font-size: 5vw;
+  display: block;
+  margin: 1vw 0;}
+#tiempoPosesion {
+  font-size: 5vw;
+  display: inline-block;}
+#cronometro-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;}
+#cronometro-partido {
+  flex: 0 0 50%;
+  text-align: center;
+  padding: 1vw;}
+#part {
+  text-align: center;
+  padding: 0.5vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  font-size: 2vw;
+  border-radius: 1vw;}
+#posesion-container {
+  flex: 0 0 30%;
+  text-align: center;
+  padding: 1vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;}
+
+/* APARTADO BOTONES */
+button {
+  background-color: rgb(0, 125, 255);
+  color: white;
+  border: none;
+  padding: 0.5vw 1vw;
+  margin: 0.3vw;
+  border-radius: 0.5vw;
+  cursor: pointer;
+  transition: background-color 0.3s;}
+.botones-cronometro {
+  display: flex;
+  justify-content: space-between;  
+  width: 100%;}
+.grupo-izquierda, .grupo-derecha {
+  display: flex;}
+#startPartido, #stopPartido, #editPartido, #resetPartido, #startPosesion, #stopPosesion, #editPosesion, #resetPosesion {
+  padding: 1vw 1vw;}
+#startPartido {
+  background-color: rgb(0, 130, 95);}
+#stopPartido {
+  background-color: rgb(180, 35, 35);}
+#resetPartido {
+  background-color: rgb(205, 155, 0);}
+#startPosesion {
+  background-color: rgb(0, 130, 95);}
+#stopPosesion {
+  background-color: rgb(180, 35, 35);}
+#resetPosesion {
+  background-color: rgb(205, 155, 0);}
+button:hover, #startPartido:hover, #resetPartido:hover, #stopPartido:hover,
+#startPosesion:hover, #resetPosesion:hover, #stopPosesion:hover {
+  background-color: rgb(0, 85, 180);}
+.input-edicion {
+  width: 10vw;
+  height: 5vw;
+  text-align: center;
+  font-size: 3vw;
+  border-radius: 1vw;}

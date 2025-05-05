@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel de Control</title>
+  <link rel="stylesheet" href="style_pc.css">
+</head>
+<body>
+  <div id="panel">
+  
+    
+    <!-- Columna Equipo A -->
+    <section id="equipoA-container">
+      <div class="equipo-header">
+        <input type="text" id="equipoA">
+      </div>
+      <div class="equipo-marcador">
+        <div class="marcador-puntos"><span id="resultadoA">0</span>
+        </div>
+        <div class="marcador-botones">
+          <button id="golA-mas">+</button>
+          <button id="golA-menos">-</button>
+        </div>
+      </div>
+      <hr class="linea">
+      <div class="expulsiones-wrapper">
+        <div class="expulsiones-equipo" id="expulsionesA">
+          <h3>Tarjetas</h3>
+          <div class="tarjeta roja">
+            <span>ROJAS: </span>
+            <div class="grupo-botones">
+              <button id="rojaA-mas">+</button>
+              <button id="rojaA-menos">-</button>
+              <span id="rojaA-cantidad">0</span>
+            </div>
+          </div>
+          <div class="tarjeta amarilla">
+            <span>AMARILLAS: </span>
+            <div class="grupo-botones">
+              <button id="amarillaA-mas">+</button>
+              <button id="amarillaA-menos">-</button>
+              <span id="amarillaA-cantidad">0</span>
+            </div>
+          </div>
+          <div class="tarjeta verde">
+            <span>VERDES: </span>
+            <div class="grupo-botones">
+              <button id="verdeA-mas">+</button>
+              <button id="verdeA-menos">-</button>
+              <span id="verdeA-cantidad">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="expulsiones-extra" id="expulsionesExtraA">
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Columna Central: Cronómetros -->
+    <section id="cronometro-container">
+      <div id="cronometro-partido">
+        <h2>Cronómetro Partido</h2>
+        <span id="tiempoPartido">10:00</span>
+        <div class="botones-cronometro">
+          <div class="grupo-izquierda">
+            <button id="startPartido">Start</button>
+            <button id="stopPartido">Stop</button>
+          </div>
+          <div class="grupo-derecha">
+            <button id="editPartido">Edit</button>
+            <button id="resetPartido">Reset</button>
+          </div>
+        </div>
+        <input type="hidden" id="editarPartido">
+      </div>
+      <select id="part">
+        <option value="1">PRIMER TIEMPO</option>
+        <option value="2">SEGUNDO TIEMPO</option>
+        <option value="3">PENALTIES</option>
+      </select>
+      <div id="posesion-container">
+        <h3>Cronómetro Posesión</h3>
+        <span id="tiempoPosesion">60</span>
+        <div class="botones-cronometro">
+          <div class="grupo-izquierda">
+            <button id="startPosesion">Start</button>
+            <button id="stopPosesion">Stop</button>
+          </div>
+          <div class="grupo-derecha">
+            <button id="editPosesion">Edit</button>
+            <button id="resetPosesion">Reset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Columna Equipo B -->
+    <section id="equipoB-container">
+      <div class="equipo-header">
+        <input type="text" id="equipoB">
+      </div>
+      <div class="equipo-marcador">
+        <div class="marcador-puntos"><span id="resultadoB">0</span>
+        </div>
+        <div class="marcador-botones">
+          <button id="golB-mas">+</button>
+          <button id="golB-menos">-</button>
+        </div>
+      </div>
+      <hr class="linea">
+      <div class="expulsiones-wrapper">
+        <div class="expulsiones-equipo" id="expulsionesB">
+          <h3>Tarjetas</h3>
+          <div class="tarjeta roja">
+            <span>ROJAS: </span>
+            <div class="grupo-botones">
+              <button id="rojaB-mas">+</button>
+              <button id="rojaB-menos">-</button>
+              <span id="rojaB-cantidad">0</span>
+            </div>
+          </div>
+          <div class="tarjeta amarilla">
+            <span>AMARILLAS: </span>
+            <div class="grupo-botones">
+              <button id="amarillaB-mas">+</button>
+              <button id="amarillaB-menos">-</button>
+              <span id="amarillaB-cantidad">0</span>
+            </div>
+          </div>
+          <div class="tarjeta verde">
+            <span>VERDES: </span>
+            <div class="grupo-botones">
+              <button id="verdeB-mas">+</button>
+              <button id="verdeB-menos">-</button>
+              <span id="verdeB-cantidad">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="expulsiones-extra" id="expulsionesExtraB">
+        </div> 
+      </div>
+    </section>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script_pc.js"></script>
+</body>
+</html>

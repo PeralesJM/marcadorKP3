@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel de Control</title>
+  <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+  <div id="panel">
+
+    
+    <!-- Columna Equipo A -->
+    <section id="equipoA-container">
+      <div class="equipo-header">
+        <span id="nombreEquipoA">CARTAGENA</span>
+      </div>
+      <div class="equipo-marcador">
+        <div class="marcador-puntos"><span id="resultadoA">0</span></div>
+      </div>
+      <hr class="linea">
+      <div class="expulsiones-wrapper">
+        <div class="expulsiones-equipo" id="expulsionesA">
+          <h3 class="te">TARJETAS</h3>
+          <div class="tarjeta roja">
+            <span>ROJAS: </span>
+            <div class="grupo-botones">
+              <span id="rojaA-cantidad">0</span>
+            </div>
+          </div>
+          <div class="tarjeta amarilla">
+            <span>AMARILLAS: </span>
+            <div class="grupo-botones">
+              <span id="amarillaA-cantidad">0</span>
+            </div>
+          </div>
+          <div class="tarjeta verde">
+            <span>VERDES: </span>
+            <div class="grupo-botones">
+              <span id="verdeA-cantidad">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="expulsiones-extra" id="expulsionesExtraA"></div>
+      </div>
+    </section>
+
+
+    <!-- Columna Central: Cronómetros -->
+    <section id="cronometro-container">
+      <div id="cronometro-partido">
+        <span id="tiempoPartido">10:00</span>
+      </div>
+      <span id="tiempo-juego">PRIMER TIEMPO</span>
+      <div id="posesion-container">
+        <h3>POSESION</h3>
+        <span id="tiempoPosesion">60</span>
+      </div>
+    </section>
+
+
+    <!-- Columna Equipo B -->
+    <section id="equipoB-container">
+      <div class="equipo-header">
+        <span id="nombreEquipoB">MURCIA</span>
+      </div>
+      <div class="equipo-marcador">
+        <div class="marcador-puntos"><span id="resultadoB">0</span></div>
+      </div>
+      <hr class="linea">
+      <div class="expulsiones-wrapper">
+        <div class="expulsiones-equipo" id="expulsionesB">
+          <h3 class="te">TARJETAS</h3>
+          <div class="tarjeta roja">
+            <span>ROJAS: </span>
+            <div class="grupo-botones">
+              <span id="rojaB-cantidad">0</span>
+            </div>
+          </div>
+          <div class="tarjeta amarilla">
+            <span>AMARILLAS: </span>
+            <div class="grupo-botones">
+              <span id="amarillaB-cantidad">0</span>
+            </div>
+          </div>
+          <div class="tarjeta verde">
+            <span>VERDES: </span>
+            <div class="grupo-botones">
+              <span id="verdeB-cantidad">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="expulsiones-extra" id="expulsionesExtraB"></div> 
+      </div>
+    </section>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="visualizacion.js"></script>
+</body>
+</html>

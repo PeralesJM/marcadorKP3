@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "msedge",
+            "name": "http://localhost:3001/index_pc.html",
+            "request": "launch",
+            "url": "http://localhost:3001/index_pc.html"
+        }
+    ]
+}
