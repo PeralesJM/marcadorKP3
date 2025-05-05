@@ -86,6 +86,6 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
 
 // ESCUCHA DEL SERVIDOR
 const port = process.env.PORT || 3001;
-app.listen(port, () => {
+http.listen(port, () => {
   console.log(`Servidor en puerto ${port}`);
 });
