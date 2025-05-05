@@ -115,32 +115,39 @@ document.getElementById("part").addEventListener("change", function () {
 
 // CRONÓMETRO DE POSESIÓN
 let tiempoPosesion = 60;
-let intervaloPosesion = null; // Guarda id del intervalo para detener tiempo
+let intervaloPosesion = null;
+
+function iniciarCuentaAtrasPosesion() {
+  clearInterval(intervaloPosesion); // Por si acaso ya estaba corriendo
+  intervaloPosesion = setInterval(() => {
+    if (tiempoPosesion > 0) {
+      tiempoPosesion--;
+      actualizarPosesion();
+      socket.emit('cronometroPosesion', { tiempo: tiempoPosesion });
+    } else {
+      clearInterval(intervaloPosesion);
+      intervaloPosesion = null;
+    }
+  }, 1000);
+}
 // Start posesión
 document.getElementById("startPosesion").onclick = () => {
   if (!intervaloPosesion) {
-    intervaloPosesion = setInterval(() => {
-      if (tiempoPosesion > 0) {
-        tiempoPosesion--;
-        actualizarPosesion();
-        socket.emit('cronometroPosesion', { tiempo: tiempoPosesion });
-      } else {
-        clearInterval(intervaloPosesion);
-        intervaloPosesion = null;
-      }
-    }, 1000);
+    iniciarCuentaAtrasPosesion();
   }
-}
+};
 // Stop posesión
 document.getElementById("stopPosesion").onclick = () => {
   clearInterval(intervaloPosesion);
-  intervaloPosesion = null; }
-// Reset posesión
-document.getElementById("resetPosesion").onclick = () => {
-  clearInterval(intervaloPosesion);
   intervaloPosesion = null;
+};
+// Reset posesión (siempre inicia la cuenta atrás)
+document.getElementById("resetPosesion").onclick = () => {
   tiempoPosesion = 60;
-  actualizarPosesion(); socket.emit('cronometroPosesion', { tiempo: tiempoPosesion });}
+  actualizarPosesion();
+  socket.emit('cronometroPosesion', { tiempo: tiempoPosesion });
+  iniciarCuentaAtrasPosesion();
+};
 // Edit posesión
 document.getElementById("editPosesion").onclick = () => {
   const contenedor = document.getElementById("tiempoPosesion"); 
@@ -162,9 +169,16 @@ document.getElementById("editPosesion").onclick = () => {
   contenedor.appendChild(input);
   input.focus();
 };
-// Actualización del tiempo de posesión
+// Actualizar posesión
 function actualizarPosesion() {
-  document.getElementById("tiempoPosesion").textContent = tiempoPosesion; }
+  const el = document.getElementById("tiempoPosesion");
+  el.textContent = tiempoPosesion;
+  if (tiempoPosesion <= 10) {                                            // Los número se ponen rojos si baja de los 10 segundos
+    el.classList.add("rojo-posicion"); 
+  } else {
+    el.classList.remove("rojo-posicion");
+  }
+}
 
 // TARJETAS
 const tarjetas = {                                                       // Almacén tarjetas

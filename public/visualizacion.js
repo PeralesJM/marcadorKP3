@@ -73,7 +73,14 @@ socket.on("tiempoJuego", (data) => {
 });
 
 socket.on("cronometroPosesion", (data) => {
-  document.getElementById("tiempoPosesion").textContent = data.tiempo;
+  const el = document.getElementById("tiempoPosesion");
+  el.textContent = data.tiempo;
+
+  if (data.tiempo <= 10) {
+    el.classList.add("rojo-posicion"); 
+  } else {
+    el.classList.remove("rojo-posicion");
+  }
 });
 
 socket.on("tarjeta", (data) => {
@@ -101,9 +108,9 @@ socket.on("tarjeta", (data) => {
       iniciarCuentaAtras(span, tarjeta, equipo, tipo);
     }
     if (tipo === "roja") {
-      contenedor.prepend(tarjeta); // Rojas arriba
+      contenedor.prepend(tarjeta); 
     } else {
-      contenedor.appendChild(tarjeta); // Amarillas abajo
+      contenedor.appendChild(tarjeta); 
     }
     
     lista.push(tarjeta);

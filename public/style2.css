@@ -55,10 +55,7 @@ section {
   justify-content: center;
   font-size: 10vw;
   font-weight: bold;
-  border: 0.15vw solid white;
-  border-radius: 2vw;
   padding: 1vw 3vw;
-  outline: 0.3vw solid white;
   color: rgb(255, 225, 100);}
 .linea {
   border-top: 0.3vw solid white;
@@ -116,14 +113,18 @@ section {
   border-radius: 2vw;
   padding: 1vw 3vw;
   outline: 0.3vw solid white;
-  color: rgb(200, 50, 50);}
+  color: white;}
 #tiempoPosesion {
   font-size: 10vw;
-  color: rgb(200, 50, 50);
+  color: white;
   border: 0.2vw solid white;
   border-radius: 2vw;
   padding: 1vw 3vw;
   outline: 0.3vw solid white;}
+.rojo-posicion {
+  color: rgb(200, 50, 50);
+  font-weight: bold;}
+  
 #tiempo-juego {
   text-align: center;
   color: rgb(255, 225, 100);

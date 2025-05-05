@@ -178,6 +178,9 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: center;}
+.rojo-posicion {
+  color: rgb(200, 50, 50); 
+  font-weight: bold;}
 
 /* APARTADO BOTONES */
 button {
