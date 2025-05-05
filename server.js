@@ -85,6 +85,7 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
 });
 
 // ESCUCHA DEL SERVIDOR
-const PORT = 3001;                                                 // El servidor escucha desde el puerto 3001
-http.listen(PORT, () => {                                          // Se manda un mensaje con el enlace 
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);});
+const port = process.env.PORT || 3001;
+app.listen(port, () => {
+  console.log(`Servidor en puerto ${port}`);
+});
