@@ -60,7 +60,7 @@
       event.preventDefault();
       const password = document.getElementById('password').value;
       if (password === "1234") {
-        window.location.href = "/index_pc.html";
+        window.location.href = "/index_pc.html?password=" + password;
       } else {
         alert("Contraseña incorrecta");
       }
