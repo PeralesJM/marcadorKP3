@@ -17,7 +17,7 @@ app.get("/index_pc.html", (req, res) => {                    // Acceso a index_p
 });
 
 // GUARDAR ESTADO MARCADOR
-const estado = {
+let estado = {
   nombres: { A: "", B: "" },
   goles: { A: 0, B: 0 },
   tiempoPartido: 600,
@@ -82,6 +82,25 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
   socket.on("disconnect", () => {
     console.log("Cliente desconectado");
   });
+
+  // Reinicio marcador
+  socket.on("reiniciarMarcador", () => {
+    console.log("Marcador reiniciado desde el panel de control");
+  
+    estado = {
+      nombres: { A: "", B: "" },
+      goles: { A: 0, B: 0 },
+      tiempoPartido: 600,
+      tiempoJuego: 1,
+      tiempoPosesion: 60,
+      tarjetas: {
+        A: { amarilla: [], roja: [], verde: 0 },
+        B: { amarilla: [], roja: [], verde: 0 }
+      }
+    };
+  
+    io.emit("estadoCompleto", estado); // Notifica a todos los clientes para actualizar el estado
+  });  
 });
 
 // ESCUCHA DEL SERVIDOR

@@ -140,13 +140,6 @@ function iniciarCuentaAtras(span, tarjeta, equipo, tipo) {
     if (tiempoRestante < 0) {
       clearInterval(intervalo);
       tarjeta.remove();
-      const lista = tarjetas[equipo][tipo];
-      const index = lista.indexOf(tarjeta);
-      if (index !== -1) {
-        lista.splice(index, 1);
-        const cantidad = document.getElementById(`${tipo}${equipo}-cantidad`);
-        cantidad.textContent = lista.length;
-      }
     } else {
       actualizarTiempo();
     }

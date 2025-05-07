@@ -259,6 +259,22 @@ function iniciarCuentaAtras(span, contenedor, equipo, tipo) {
     document.getElementById(`${tipo}${equipo}-mas`).onclick = () => manejarTarjeta(equipo, tipo, "mas");
     document.getElementById(`${tipo}${equipo}-menos`).onclick = () => manejarTarjeta(equipo, tipo, "menos");});});
 
+// Control reinicio marcador
+document.getElementById("part").addEventListener("change", function () {
+  const valor = this.value;
+
+  if (valor === "reiniciar") {
+    if (confirm("¿Estás seguro de que deseas reiniciar el marcador?")) {
+      socket.emit("reiniciarMarcador");
+    }
+
+    // Vuelve al valor anterior (por ejemplo, PRIMER TIEMPO)
+    this.value = "1"; // o guarda el valor anterior en una variable
+  } else {
+    socket.emit("cambiarTiempoJuego", { tiempo: parseInt(valor) });
+  }
+});
+
 // ESCUCHAR EVENTOS EMITIDOS POR EL SERVIDOR
 socket.on('goles', (data) => {
   if (data.equipo === 'A') golesA = data.goles;
@@ -280,3 +296,41 @@ socket.on('tarjeta', (data) => {
   manejarTarjeta(data.equipo, data.tipo, data.operacion);
   actualizar();
 });
+
+// NUEVO: ESCUCHAR REINICIO DE ESTADO COMPLETO
+socket.on("estadoCompleto", (estado) => {
+  // Nombres de equipo
+  document.getElementById("nombreA").value = estado.nombres.A;
+  document.getElementById("nombreB").value = estado.nombres.B;
+
+  // Goles
+  golesA = estado.goles.A;
+  golesB = estado.goles.B;
+  actualizarResultado();
+
+  // Tiempo de juego
+  document.getElementById("part").value = estado.tiempoJuego;
+
+  // Cronómetros
+  tiempoPartido = 0;
+  tiempoPosesion = estado.tiempoPosesion;
+  actualizarCronoPartido();
+  actualizarPosesion();
+
+  // Tarjetas
+  reiniciarTarjetas(estado.tarjetas);
+});
+
+// Función para reiniciar visualmente las tarjetas
+function reiniciarTarjetas(tarjetas) {
+  ["A", "B"].forEach(equipo => {
+    ["amarilla", "roja"].forEach(tipo => {
+      const container = document.getElementById(`expulsiones-${equipo}-${tipo}`);
+      if (container) container.innerHTML = "";
+    });
+
+    const verde = tarjetas[equipo].verde;
+    document.getElementById(`verde${equipo}`).textContent = verde;
+  });
+}
+
