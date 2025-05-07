@@ -50,14 +50,8 @@
     <h2>Acceso al Panel de Control</h2>
     <form id="loginForm">
       <input type="password" id="password" placeholder="Contraseña" required>
-      <select id="partido">
-        <option value="3001">Partido 1</option>
-        <option value="3002">Partido 2</option>
-        <option value="3003">Partido 3</option>
-      </select>
       <button type="submit">Acceder</button>
     </form>
-    
   </div>
 
   <script>
@@ -65,14 +59,8 @@
     loginForm.addEventListener('submit', function(event) {
       event.preventDefault();
       const password = document.getElementById('password').value;
-      const puerto = document.getElementById('partido').value;
-      const contraseñas = {
-        "3001": "1234",
-        "3002": "2345",
-        "3003": "3456"
-      };
-      if (password === contraseñas[puerto]) {
-        window.location.href = `"/index_pc.html"`;
+      if (password === "1234") {
+        window.location.href = "/index_pc.html";
       } else {
         alert("Contraseña incorrecta");
       }
