@@ -145,3 +145,7 @@ function iniciarCuentaAtras(span, tarjeta, equipo, tipo) {
     }
   }, 1000);
 }
+
+// GENERACION QR
+new QRCode(document.getElementById("QR"), {
+  text: "https://marcadorkp.onrender.com/index2.html",});

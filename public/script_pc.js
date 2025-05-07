@@ -333,4 +333,3 @@ function reiniciarTarjetas(tarjetas) {
     document.getElementById(`verde${equipo}`).textContent = verde;
   });
 }
-
