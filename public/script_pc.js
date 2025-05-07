@@ -192,7 +192,10 @@ function manejarTarjeta(equipo, tipo, operacion) {
   const cantidad = document.getElementById(`${tipo}${equipo}-cantidad`); // Contador visual
   // Añadir tarjetas
   if (operacion === "mas") {
-    if (tipo !== "verde" && lista.length >= MAX_TARJETAS) return;        // Devuelve límite tarjetas
+    if (tipo === "roja" && lista.length >= MAX_TARJETAS) return;         // Devuelve límite tarjetas
+    if (tipo === "amarilla") {
+      const expulsionesActivas = Array.from(document.querySelectorAll(`#expulsionesExtra${equipo} .amarilla`)).length;
+      if (expulsionesActivas >= MAX_TARJETAS) return;}    
     const tarjeta = document.createElement("div");                       // Crea elemento visual de tarjeta
     tarjeta.className = `tarjeta-nombre ${tipo}`;
     if (tipo === "verde") {
@@ -245,11 +248,6 @@ function iniciarCuentaAtras(span, contenedor, equipo, tipo) {
     if (tiempo <= 0) {
       clearInterval(intervalo);
       contenedor.remove();
-      // Eliminar del array de tarjetas
-      const index = tarjetas[equipo][tipo].indexOf(contenedor);
-      if (index > -1) tarjetas[equipo][tipo].splice(index, 1);
-      // Actualizar contador
-      document.getElementById(`${tipo}${equipo}-cantidad`).textContent = tarjetas[equipo][tipo].length;
     } else {
       actualizar(); // Actualizar reloj cada segundo
     }
