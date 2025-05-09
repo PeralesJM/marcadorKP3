@@ -114,6 +114,7 @@ section {
 #QR {
   width: 10vw; 
   height: 10vw; 
+  aspect-ratio: 1 / 1;
   display: flex;
   margin: 2vw;
   justify-content: center;
@@ -146,3 +147,7 @@ section {
   text-align: center;
   color: rgb(255, 225, 100);
   font-size: 3vw;}
+
+@media (max-width: 400px) {
+  #QR {
+      width: 40vw;}}
