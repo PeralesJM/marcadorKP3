@@ -3,14 +3,14 @@ const express = require("express");
 const app = express();                                       // Iniciar app
 const http = require("http").createServer(app);              // Crear servidor HTTP
 const io = require("socket.io")(http);                       // Usar Scoket.io en el servidor
-app.use(express.static("public"));                           // Acceso a archivos estáticos desde "public"
+app.use(express.static("public2"));                           // Acceso a archivos estáticos desde "public"
 
 // CONTRASEÑA
 const contrasena = "1234";
 app.get("/index_pc.html", (req, res) => {                    // Acceso a index_pc.html con contraseña
   const contraseñaUsuario = req.query.password;
   if (contraseñaUsuario === contrasena) {
-    res.sendFile(__dirname + "/public/index_pc.html");
+    res.sendFile(__dirname + "/public2/index_pc.html");
   } else {
     res.send("Acceso denegado. Contraseña incorrecta."); 
   }
@@ -104,7 +104,7 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
 });
 
 // ESCUCHA DEL SERVIDOR
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
 http.listen(port, () => {
   console.log(`Servidor en puerto ${port}`);
 });
