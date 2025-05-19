@@ -39,7 +39,7 @@ async function guardarEstadoEnBD() {
   const { error } = await supabase
     .from('marcador_tb')
     .upsert([{
-      id: 1,
+      id: 3,
       equipo_a: estado.nombres.A,
       equipo_b: estado.nombres.B,
       resultado_a: estado.goles.A,
