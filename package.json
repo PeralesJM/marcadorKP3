@@ -1,16 +1,17 @@
 {
-  "name": "partido1",
+  "name": "prueba_1",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "server_1.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server_1.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.4",
     "express": "^5.1.0",
     "socket.io": "^4.8.1"
   }

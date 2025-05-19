@@ -55,6 +55,7 @@ document.getElementById("startPartido").onclick = () => {
     }, 1000);
   }
 };
+
 // Stop partido
 document.getElementById("stopPartido").onclick = () => {
   clearInterval(intervaloPartido);
@@ -266,9 +267,28 @@ document.getElementById("part").addEventListener("change", function () {
   if (valor === "reiniciar") {
     if (confirm("¿Estás seguro de que deseas reiniciar el marcador?")) {
       socket.emit("reiniciarMarcador");
+      // 🔁 Recarga el panel de control
+      location.reload();
     }
-
     // Vuelve al valor anterior (por ejemplo, PRIMER TIEMPO)
+    this.value = "1"; // o guarda el valor anterior en una variable
+  } else {
+    socket.emit("cambiarTiempoJuego", { tiempo: parseInt(valor) });
+  }
+});
+
+// Control para finalizar partido
+document.getElementById("part").addEventListener("change", function () {
+  const valor = this.value;
+
+  if (valor === "finalizar") {
+  if (confirm("¿Quieres finalizar el partido y guardar los datos?")) {
+    socket.emit("finalizarPartido");
+    alert("✅ Partido guardado correctamente");
+    // Opcional: recargar o limpiar la interfaz
+    location.reload();
+  }
+  // Vuelve al valor anterior (por ejemplo, PRIMER TIEMPO)
     this.value = "1"; // o guarda el valor anterior en una variable
   } else {
     socket.emit("cambiarTiempoJuego", { tiempo: parseInt(valor) });
