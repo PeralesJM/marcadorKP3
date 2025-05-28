@@ -81,12 +81,16 @@ section {
   font-size: 1.4vw;
   font-weight: bold;
   color: white;}
-.tarjeta.roja {
+.tarjeta-nombre {
+  margin-right: 1vw;
+  flex: 1;
+}
+.tarjeta.roja, .tarjeta-nombre.roja {
   background-color: rgb(200, 50, 50);}
-.tarjeta.amarilla {
+.tarjeta.amarilla, .tarjeta-nombre.amarilla {
   background-color: rgb(250, 200, 0);
   color: black;}
-.tarjeta.verde {
+.tarjeta.verde, .tarjeta-nombre.verde {
   background-color: rgb(25, 175, 75);}
 
 /* CRONÓMETROS */
@@ -141,7 +145,7 @@ section {
   padding: 1vw 3vw;
   outline: 0.3vw solid white;}
 .rojo-posicion {
-  color: rgb(200, 50, 50);
+  color: rgb(200, 50, 50); 
   font-weight: bold;}
   
 #tiempo-juego {

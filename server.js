@@ -22,6 +22,7 @@ app.get("/index_pc.html", (req, res) => {                    // Acceso a index_p
     res.send("Acceso denegado. Contraseña incorrecta.");}
 });
 
+
 // GUARDAR ESTADO MARCADOR
 let estado = {
   nombres: { A: "", B: "" },
@@ -29,9 +30,10 @@ let estado = {
   tiempoPartido: 600,
   tiempoJuego: 1,
   tiempoPosesion: 60,
+  pausaTarjetas: false,
   tarjetas: {
-    A: { amarilla: [], roja: [], verde: 0 },
-    B: { amarilla: [], roja: [], verde: 0 }}
+    A: { amarilla: [], roja: [], verde: [] },
+    B: { amarilla: [], roja: [], verde: [] }}
 };
 
 // 🔄 FUNCIONES BD
@@ -44,12 +46,12 @@ async function guardarEstadoEnBD() {
       equipo_b: estado.nombres.B,
       resultado_a: estado.goles.A,
       resultado_b: estado.goles.B,
-      rojas_a: estado.tarjetas.A.roja.length,
-      rojas_b: estado.tarjetas.B.roja.length,
-      amarillas_a: estado.tarjetas.A.amarilla.length,
-      amarillas_b: estado.tarjetas.B.amarilla.length,
-      verdes_a: estado.tarjetas.A.verde,
-      verdes_b: estado.tarjetas.B.verde,
+      rojas_a: JSON.stringify(estado.tarjetas.A.roja),
+      rojas_b: JSON.stringify(estado.tarjetas.B.roja),
+      amarillas_a: JSON.stringify(estado.tarjetas.A.amarilla),
+      amarillas_b: JSON.stringify(estado.tarjetas.B.amarilla),
+      verdes_a: JSON.stringify(estado.tarjetas.A.verde),
+      verdes_b: JSON.stringify(estado.tarjetas.B.verde),
       tiempo: estado.tiempoPartido,
       fecha: new Date()
     }]);
@@ -79,14 +81,15 @@ async function cargarEstadoDesdeBD() {
       tiempoPartido: data.tiempo ,
       tarjetas: {
         A: {
-          amarilla: new Array(data.amarillas_a || 0).fill(""),  // Crear array según cantidad de tarjetas
-          roja: new Array(data.rojas_a || 0).fill(""),  // Crear array según cantidad de tarjetas
-          verde: data.verdes_a || 0
+          roja: JSON.parse(data.rojas_a || "[]"),
+          amarilla: JSON.parse(data.amarillas_a || "[]"),
+          verde: JSON.parse(data.verdes_a || "[]"),
+
         },
         B: {
-          amarilla: new Array(data.amarillas_b || 0).fill(""),  // Crear array según cantidad de tarjetas
-          roja: new Array(data.rojas_b || 0).fill(""),  // Crear array según cantidad de tarjetas
-          verde: data.verdes_b || 0
+          roja: JSON.parse(data.rojas_b || "[]"),
+          amarilla: JSON.parse(data.amarillas_b || "[]"),
+          verde: JSON.parse(data.verdes_b || "[]"),
         }
       },
     };
@@ -145,22 +148,28 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
     estado.tiempoPosesion = data.tiempo;
     socket.broadcast.emit("cronometroPosesion", data);
     guardarEstadoEnBD();
+
+  socket.on("reanudarTiempo", () => {
+    estado.pausaTarjetas = false;   
+    io.emit("reanudarTarjetas");  // 🔁 Reanuda tarjetas en todos
+    guardarEstadoEnBD();
+  });
+
+  socket.on("pararTiempo", () => {
+    estado.pausaTarjetas = true; 
+    io.emit("pausarTarjetas");    // ⏸ Pausa tarjetas en todos
+    guardarEstadoEnBD();
+  });
   });
   // Gestión de tarjetas
   socket.on("tarjeta", (data) => {
     const { equipo, tipo, operacion, nombre } = data;
     if (operacion === "mas") {                                                             // Añade tarjetas con la operación "más"
-      if (tipo === "verde") {
-        estado.tarjetas[equipo][tipo]++;
-      } else {
-        estado.tarjetas[equipo][tipo].push({ nombre: nombre || tipo.toUpperCase() });      // En tarjetas Rojas y Amarillas se añade también el nombre del jugador
-      }
+      estado.tarjetas[equipo][tipo].push({
+         nombre: nombre || tipo.toUpperCase(),
+         timestamp: Date.now()});      // En tarjetas Rojas y Amarillas se añade también el nombre del jugador
     } else if (operacion === "menos") {
-      if (tipo === "verde") {
-        estado.tarjetas[equipo][tipo] = Math.max(estado.tarjetas[equipo][tipo] - 1, 0);    // Resta tarjetas con la operacióm "menos"
-      } else {
         estado.tarjetas[equipo][tipo].pop();
-      }
     }
     socket.broadcast.emit("tarjeta", data);
     guardarEstadoEnBD();
@@ -180,8 +189,8 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
       tiempoJuego: 1,
       tiempoPosesion: 60,
       tarjetas: {
-        A: { amarilla: [], roja: [], verde: 0 },
-        B: { amarilla: [], roja: [], verde: 0 }
+        A: { amarilla: [], roja: [], verde: [] },
+        B: { amarilla: [], roja: [], verde: [] }
       }
     };
   
@@ -201,8 +210,8 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
         rojas_b: estado.tarjetas.B.roja.length,
         amarillas_a: estado.tarjetas.A.amarilla.length,
         amarillas_b: estado.tarjetas.B.amarilla.length,
-        verdes_a: estado.tarjetas.A.verde,
-        verdes_b: estado.tarjetas.B.verde,
+        verdes_a: estado.tarjetas.A.verde.lenght,
+        verdes_b: estado.tarjetas.B.verde.lenght,
         fecha: new Date()
       }]);
 
@@ -220,8 +229,8 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
       tiempoJuego: 1,
       tiempoPosesion: 60,
       tarjetas: {
-        A: { amarilla: [], roja: [], verde: 0 },
-        B: { amarilla: [], roja: [], verde: 0 }
+        A: { amarilla: [], roja: [], verde: [] },
+        B: { amarilla: [], roja: [], verde: [] }
       }
     };
     io.emit("estadoCompleto", estado);

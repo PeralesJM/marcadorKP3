@@ -1,11 +1,12 @@
-// === script.js actualizado ===
-
 const socket = io();
 
 const tarjetas = {
   A: { amarilla: [], roja: [], verde: [] },
   B: { amarilla: [], roja: [], verde: [] }
 };
+
+const tarjetasActivas = [];
+let tarjetasPausadas = false;
 
 socket.emit("solicitarEstado");
 
@@ -20,36 +21,45 @@ socket.on("estadoCompleto", (estado) => {
   let seg = estado.tiempoPartido % 60;
   document.getElementById("tiempoPartido").textContent = `${min.toString().padStart(2, "0")}:${seg.toString().padStart(2, "0")}`;
 
-  const tiempoTexto = { 1: "PRIMER TIEMPO", 2: "SEGUNDO TIEMPO", 3: "PENALTIES" };
+  const tiempoTexto = { 1: "PRIMER TIEMPO", 2: "SEGUNDO TIEMPO", 3: "PRORROGA" };
   document.getElementById("tiempo-juego").textContent = tiempoTexto[estado.tiempoJuego];
 
   document.getElementById("tiempoPosesion").textContent = estado.tiempoPosesion;
 
   ["A", "B"].forEach(equipo => {
-    ["amarilla", "roja"].forEach(tipo => {
-      const contenedor = document.getElementById(`expulsionesExtra${equipo}`);
-      const cantidad = document.getElementById(`${tipo}${equipo}-cantidad`);
-      contenedor.innerHTML = "";
-      tarjetas[equipo][tipo] = [];
-      estado.tarjetas[equipo][tipo].forEach(data => {
-        const tarjeta = document.createElement("div");
-        tarjeta.className = `tarjeta ${tipo}`;
-        tarjeta.textContent = data.nombre;
-        if (tipo === "amarilla") {
-          const span = document.createElement("span");
-          tarjeta.appendChild(span);
-          iniciarCuentaAtras(span, tarjeta, equipo, tipo);
-        }
-        contenedor.appendChild(tarjeta);
-        tarjetas[equipo][tipo].push(tarjeta);
-      });
-      cantidad.textContent = tarjetas[equipo][tipo].length;
+  const contenedor = document.getElementById(`expulsionesExtra${equipo}`);
+  contenedor.innerHTML = ""; // Limpiar una sola vez por equipo
+
+  ["amarilla", "roja", "verde"].forEach(tipo => {
+    const cantidad = document.getElementById(`${tipo}${equipo}-cantidad`);
+    tarjetas[equipo][tipo] = [];
+
+    estado.tarjetas[equipo][tipo].forEach(data => {
+      const tarjeta = document.createElement("div");
+      tarjeta.className = `tarjeta ${tipo}`;
+
+      const nombre = document.createElement("span");
+      nombre.className = "tarjeta-nombre";
+      nombre.textContent = data.nombre;
+      tarjeta.appendChild(nombre);
+
+      // Siempre incluir temporizador, sin importar el tipo
+      const span = document.createElement("span");
+      tarjeta.appendChild(span);
+      iniciarCuentaAtras(span, tarjeta, equipo, tipo, data.timestamp, tarjetasPausadas); // 👈 Aquí va siempre el timestamp
+
+      insertarTarjetaOrdenada(contenedor, tarjeta, tipo);
+      tarjetas[equipo][tipo].push(tarjeta);
     });
 
-    tarjetas[equipo].verde = Array(estado.tarjetas[equipo].verde).fill(null);
-    document.getElementById(`verde${equipo}-cantidad`).textContent = tarjetas[equipo].verde.length;
+    if (cantidad) {
+      cantidad.textContent = tarjetas[equipo][tipo].length;
+    }
   });
 });
+
+
+  });
 
 socket.on("nombreEquipo", (data) => {
   const equipo = data.equipo;
@@ -68,7 +78,7 @@ socket.on("cronometroPartido", (data) => {
 });
 
 socket.on("tiempoJuego", (data) => {
-  const tiempoTexto = { 1: "PRIMER TIEMPO", 2: "SEGUNDO TIEMPO", 3: "PENALTIES" };
+  const tiempoTexto = { 1: "PRIMER TIEMPO", 2: "SEGUNDO TIEMPO", 3: "PRORROGA" };
   document.getElementById("tiempo-juego").textContent = tiempoTexto[data.tiempo];
 });
 
@@ -84,66 +94,153 @@ socket.on("cronometroPosesion", (data) => {
 });
 
 socket.on("tarjeta", (data) => {
-  const equipo = data.equipo;
-  const tipo = data.tipo;
-  const operacion = data.operacion;
+  const { equipo, tipo, operacion, nombre } = data;
 
   const cantidad = document.getElementById(`${tipo}${equipo}-cantidad`);
   const contenedor = document.getElementById(`expulsionesExtra${equipo}`);
   const lista = tarjetas[equipo][tipo];
 
   if (operacion === "mas") {
-    
-    if (tipo === "verde") {
-      lista.push(null);
-      cantidad.textContent = lista.length;
-      return;
-    }
     const tarjeta = document.createElement("div");
     tarjeta.className = `tarjeta ${tipo}`;
-    tarjeta.textContent = data.nombre || tipo.toUpperCase();
-    if (tipo === "amarilla") {
-      const span = document.createElement("span");
-      tarjeta.appendChild(span);
-      iniciarCuentaAtras(span, tarjeta, equipo, tipo);
-    }
-    if (tipo === "roja") {
-      contenedor.prepend(tarjeta); 
-    } else {
-      contenedor.appendChild(tarjeta); 
-    }
-    
+
+    const spanNombre = document.createElement("span");
+    spanNombre.className = "tarjeta-nombre";
+    spanNombre.textContent = nombre || tipo.toUpperCase();
+    tarjeta.appendChild(spanNombre);
+
+    const spanTiempo = document.createElement("span");
+    tarjeta.appendChild(spanTiempo);
+    iniciarCuentaAtras(spanTiempo, tarjeta, equipo, tipo, data.timestamp);
+
+    insertarTarjetaOrdenada(contenedor, tarjeta, tipo);
     lista.push(tarjeta);
     cantidad.textContent = lista.length;
 
-  } else if (operacion === "menos" && lista.length > 0) {
-    const tarjeta = lista.pop();
-    if (tipo !== "verde" && tarjeta) {
-      tarjeta.remove();
+    } else if (operacion === "menos" && lista.length > 0) {
+      const tarjeta = lista.pop();
+      if (tarjeta) tarjeta.remove();
+      cantidad.textContent = lista.length;
     }
-    cantidad.textContent = lista.length;
-  }
+  });
+  
+socket.on("pausarTarjetas", () => {
+  tarjetasPausadas = true;
+  pausarTodasLasTarjetas();
 });
 
-function iniciarCuentaAtras(span, tarjeta, equipo, tipo) {
-  let tiempoRestante = 120;
-  const actualizarTiempo = () => {
-    const minutos = Math.floor(tiempoRestante / 60);
-    const segundos = tiempoRestante % 60;
-    span.textContent = ` (${minutos}:${segundos.toString().padStart(2, "0")})`;
+socket.on("reanudarTarjetas", () => {
+  tarjetasPausadas = false;
+  reanudarTodasLasTarjetas();
+});
+
+
+function insertarTarjetaOrdenada(contenedor, tarjeta, tipo) {
+  if (tipo === "roja") {
+    contenedor.prepend(tarjeta);
+  } else if (tipo === "verde") {
+    contenedor.appendChild(tarjeta);
+  } else {
+    // Insertar después de las rojas pero antes de las verdes
+    const rojas = contenedor.querySelectorAll(".tarjeta-nombre.roja").length;
+    const verdes = contenedor.querySelectorAll(".tarjeta-nombre.verde");
+    if (verdes.length > 0) {
+      contenedor.insertBefore(tarjeta, verdes[0]);
+    } else if (contenedor.children.length > rojas) {
+      contenedor.insertBefore(tarjeta, contenedor.children[rojas]);
+    } else {
+      contenedor.appendChild(tarjeta);
+    }
+  }
+}
+
+function iniciarCuentaAtras(span, contenedor, equipo, tipo, timestamp = Date.now(), pausada = false) {
+  const tiempoTotal = 120000; // 2 minutos
+
+  const tarjetaInfo = {
+    intervalo: null,
+    timestamp,
+    pausadoEn: null,
+    span,
+    contenedor,
+    equipo,
+    tipo
   };
 
-  actualizarTiempo();
+  const getTiempoRestante = () => {
+    return Math.max(0, Math.floor((tiempoTotal - (Date.now() - tarjetaInfo.timestamp)) / 1000));
+  };
 
-  const intervalo = setInterval(() => {
-    tiempoRestante--;
-    if (tiempoRestante < 0) {
-      clearInterval(intervalo);
-      tarjeta.remove();
+  const actualizarCuentaAtras = () => {
+    const tiempoRestante = getTiempoRestante();
+    if (tiempoRestante <= 0) {
+      clearInterval(tarjetaInfo.intervalo);
+      tarjetaInfo.contenedor.remove();
+      const index = tarjetasActivas.indexOf(tarjetaInfo);
+      if (index !== -1) tarjetasActivas.splice(index, 1);
     } else {
-      actualizarTiempo();
+      const min = String(Math.floor(tiempoRestante / 60));
+      const seg = String(tiempoRestante % 60).padStart(2, "0");
+      tarjetaInfo.span.textContent = ` ${min}:${seg}`;
     }
-  }, 1000);
+  };
+
+  actualizarCuentaAtras();
+
+  if (!pausada) {
+    tarjetaInfo.intervalo = setInterval(actualizarCuentaAtras, 1000);
+  } else {
+    // Si está pausada, guardamos la marca de pausa inmediatamente
+    tarjetaInfo.pausadoEn = Date.now();
+  }
+
+  tarjetasActivas.push(tarjetaInfo);
+}
+
+
+function pausarTodasLasTarjetas() {
+  tarjetasActivas.forEach(t => {
+    if (t.intervalo) {
+      clearInterval(t.intervalo);
+      t.intervalo = null;
+      t.pausadoEn = Date.now();
+    }
+  });
+}
+
+function reanudarTodasLasTarjetas() {
+  tarjetasActivas.forEach(t => {
+    // Si ya hay un intervalo activo, no hacer nada
+    if (t.intervalo) return;
+
+    if (t.pausadoEn) {
+      const pausaDuracion = Date.now() - t.pausadoEn;
+      t.timestamp += pausaDuracion;
+      t.pausadoEn = null;
+    }
+
+    const tiempoTotal = 120000; // 2 minutos
+    const getTiempoRestante = () => {
+      return Math.max(0, Math.floor((tiempoTotal - (Date.now() - t.timestamp)) / 1000));
+    };
+
+    const actualizarCuentaAtras = () => {
+      const tiempoRestante = getTiempoRestante();
+      if (tiempoRestante <= 0) {
+        clearInterval(t.intervalo);
+        t.contenedor.remove();
+        const index = tarjetasActivas.indexOf(t);
+        if (index !== -1) tarjetasActivas.splice(index, 1);
+      } else {
+        const min = String(Math.floor(tiempoRestante / 60));
+        const seg = String(tiempoRestante % 60).padStart(2, "0");
+        t.span.textContent = ` ${min}:${seg}`;
+      }
+    };
+
+    actualizarCuentaAtras(); // Actualiza inmediatamente al reanudar
+    t.intervalo = setInterval(actualizarCuentaAtras, 1000);
+  });
 }
 
 // GENERACION QR

@@ -54,12 +54,31 @@ document.getElementById("startPartido").onclick = () => {
       }
     }, 1000);
   }
+  if (!intervaloPosesion) {
+    iniciarCuentaAtrasPosesion();
+  }
+  reanudarTodasLasTarjetas();
+  socket.emit("reanudarTiempo");
 };
 
 // Stop partido
 document.getElementById("stopPartido").onclick = () => {
-  clearInterval(intervaloPartido);
-  intervaloPartido = null; };
+  // 🛑 Detener cronómetro del partido
+  if (intervaloPartido) {
+    clearInterval(intervaloPartido);
+    intervaloPartido = null;
+  }
+
+  // 🛑 Detener cronómetro de posesión
+  if (intervaloPosesion) {
+    clearInterval(intervaloPosesion);
+    intervaloPosesion = null;
+  }
+
+  // ⏸ Pausar todos los cronómetros de tarjetas
+  pausarTodasLasTarjetas();
+  socket.emit("pararTiempo");
+};
 // Reset partido
 document.getElementById("resetPartido").onclick = () => {
   clearInterval(intervaloPartido);
@@ -174,18 +193,13 @@ document.getElementById("editPosesion").onclick = () => {
 function actualizarPosesion() {
   const el = document.getElementById("tiempoPosesion");
   el.textContent = tiempoPosesion;
-  if (tiempoPosesion <= 10) {                                            // Los número se ponen rojos si baja de los 10 segundos
-    el.classList.add("rojo-posicion"); 
-  } else {
-    el.classList.remove("rojo-posicion");
-  }
 }
 
 // TARJETAS
 const tarjetas = {                                                       // Almacén tarjetas
   A: { amarilla: [], roja: [], verde: [] },
   B: { amarilla: [], roja: [], verde: [] }};
-const MAX_TARJETAS = 2;                                                  // Máximo de tarjetas
+  
 // Añadir o quitar tarjetas
 function manejarTarjeta(equipo, tipo, operacion) {
   const lista = tarjetas[equipo][tipo];                                  // Lista tarjetas actual
@@ -193,34 +207,29 @@ function manejarTarjeta(equipo, tipo, operacion) {
   const cantidad = document.getElementById(`${tipo}${equipo}-cantidad`); // Contador visual
   // Añadir tarjetas
   if (operacion === "mas") {
-    if (tipo === "roja" && lista.length >= MAX_TARJETAS) return;         // Devuelve límite tarjetas
-    if (tipo === "amarilla") {
-      const expulsionesActivas = Array.from(document.querySelectorAll(`#expulsionesExtra${equipo} .amarilla`)).length;
-      if (expulsionesActivas >= MAX_TARJETAS) return;}    
     const tarjeta = document.createElement("div");                       // Crea elemento visual de tarjeta
     tarjeta.className = `tarjeta-nombre ${tipo}`;
-    if (tipo === "verde") {
-      lista.push(null); 
-      cantidad.textContent = lista.length;
-      socket.emit('tarjeta', { equipo, tipo, operacion: "mas" });
-      return;}
     const input = document.createElement("input");                       // Campo para añadir nombre de jugador
     input.addEventListener("keydown", (e) => {                           // Poner tarjeta al presionar enter
       if (e.key === "Enter" && input.value.trim() !== "") {
         const nombre = document.createElement("span");
         nombre.textContent = input.value;
         input.replaceWith(nombre);
-        if (tipo === "amarilla") {                                       // Iniciar cuenta atrás si es amarilla
-          const tiempo = document.createElement("span");
-          tarjeta.appendChild(tiempo);
-          iniciarCuentaAtras(tiempo, tarjeta, equipo, tipo);
-        }
-        socket.emit('tarjeta', { equipo, tipo, operacion: "mas", nombre: input.value });
+        const tiempo = document.createElement("span");
+        tarjeta.appendChild(tiempo);
+        iniciarCuentaAtras(tiempo, tarjeta);
+        
+        socket.emit('tarjeta', { equipo, tipo, operacion: "mas", nombre: nombre.textContent });
       }
     });
     tarjeta.appendChild(input);
-    if (tipo === "roja") {extra.prepend(tarjeta);}                       // Ordenar rojas arriba
-     else {extra.appendChild(tarjeta);}                                  // Ordenar amarillas abajo
+    if (tipo === "roja") {extra.prepend(tarjeta);
+      } else if (tipo === "verde") {extra.appendChild(tarjeta);
+      } else {
+        const rojas = extra.querySelectorAll(".tarjeta-nombre.roja").length;
+        const children = Array.from(extra.children);
+        extra.insertBefore(tarjeta, children[rojas] || null);
+      }
     lista.push(tarjeta);                                                 // Añadir a lista interna
     cantidad.textContent = lista.length;                                 // Actualizar contador
     input.focus();                                                       // Foco en el campo del texto
@@ -228,32 +237,64 @@ function manejarTarjeta(equipo, tipo, operacion) {
   // Restar tarjetas
   if (operacion === "menos" && lista.length > 0) {                       
     const tarjeta = lista.pop();
-    if (tipo !== "verde") {
-      if (tarjeta) tarjeta.remove();
-    }
+    if (tarjeta) tarjeta.remove();
     cantidad.textContent = lista.length;
     socket.emit('tarjeta', { equipo, tipo, operacion: "menos" });
   }
 }
-// Cuenta atrás tarjetas amarillas
-function iniciarCuentaAtras(span, contenedor, equipo, tipo) {
+// Cuenta atrás tarjetas
+// Nueva variable global para gestionar las tarjetas activas
+const tarjetasActivas = []; // { intervalo, tiempo, span, contenedor }
+
+function iniciarCuentaAtras(span, contenedor) {
   let tiempo = 120;
+
   function actualizar() {
     const min = String(Math.floor(tiempo / 60)).padStart(2, "0");
     const seg = String(tiempo % 60).padStart(2, "0");
     span.textContent = `${min}:${seg}`;
   }
+
   actualizar();
-  const intervalo = setInterval(() => {
-    tiempo--;
-    if (tiempo <= 0) {
-      clearInterval(intervalo);
+
+  const tarjetaData = { tiempo, span, contenedor, intervalo: null };
+
+  function tick() {
+    tarjetaData.tiempo--;
+    if (tarjetaData.tiempo <= 0) {
+      clearInterval(tarjetaData.intervalo);
       contenedor.remove();
     } else {
-      actualizar(); // Actualizar reloj cada segundo
+      const min = String(Math.floor(tarjetaData.tiempo / 60)).padStart(2, "0");
+      const seg = String(tarjetaData.tiempo % 60).padStart(2, "0");
+      tarjetaData.span.textContent = `${min}:${seg}`;
     }
-  }, 1000);
+  }
+
+  tarjetaData.intervalo = setInterval(tick, 1000);
+  tarjetasActivas.push(tarjetaData);
 }
+
+function pausarTodasLasTarjetas() {
+  tarjetasActivas.forEach(t => clearInterval(t.intervalo));
+}
+
+function reanudarTodasLasTarjetas() {
+  tarjetasActivas.forEach(t => {
+    t.intervalo = setInterval(() => {
+      t.tiempo--;
+      if (t.tiempo <= 0) {
+        clearInterval(t.intervalo);
+        t.contenedor.remove();
+      } else {
+        const min = String(Math.floor(t.tiempo / 60)).padStart(2, "0");
+        const seg = String(t.tiempo % 60).padStart(2, "0");
+        t.span.textContent = `${min}:${seg}`;
+      }
+    }, 1000);
+  });
+}
+
 // Control botones tarjetas
 ["A", "B"].forEach(equipo => {
   ["roja", "amarilla", "verde"].forEach(tipo => {
@@ -317,7 +358,7 @@ socket.on('tarjeta', (data) => {
   actualizar();
 });
 
-// NUEVO: ESCUCHAR REINICIO DE ESTADO COMPLETO
+/*// NUEVO: ESCUCHAR REINICIO DE ESTADO COMPLETO
 socket.on("estadoCompleto", (estado) => {
   // Nombres de equipo
   document.getElementById("nombreA").value = estado.nombres.A;
@@ -344,12 +385,9 @@ socket.on("estadoCompleto", (estado) => {
 // Función para reiniciar visualmente las tarjetas
 function reiniciarTarjetas(tarjetas) {
   ["A", "B"].forEach(equipo => {
-    ["amarilla", "roja"].forEach(tipo => {
+    ["amarilla", "roja", "verde"].forEach(tipo => {
       const container = document.getElementById(`expulsiones-${equipo}-${tipo}`);
       if (container) container.innerHTML = "";
     });
-
-    const verde = tarjetas[equipo].verde;
-    document.getElementById(`verde${equipo}`).textContent = verde;
   });
-}
+}*/

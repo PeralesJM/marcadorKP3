@@ -137,7 +137,9 @@ section {
 .tarjeta-nombre.roja {
   border-left-color: rgb(225, 0, 0);}
 .tarjeta-nombre.amarilla {
-  border-left-color: rgb(255, 200, 0);}
+  border-left-color: rgb(250, 200, 0);}
+.tarjeta-nombre.verde {
+  border-left-color: rgb(25, 175, 75);}
 .nombre-tarjeta {
   flex: 1;
   font-size: 1vw;
@@ -179,9 +181,6 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: center;}
-.rojo-posicion {
-  color: rgb(200, 50, 50); 
-  font-weight: bold;}
 
 /* APARTADO BOTONES */
 button {
@@ -199,6 +198,9 @@ button {
   width: 100%;}
 .grupo-izquierda, .grupo-derecha {
   display: flex;}
+.grupo-derecha {
+  position: relative;
+}
 #startPartido, #stopPartido, #editPartido, #resetPartido, #startPosesion, #stopPosesion, #editPosesion, #resetPosesion {
   padding: 1vw 1vw;}
 #startPartido {
@@ -208,11 +210,27 @@ button {
 #resetPartido {
   background-color: rgb(205, 155, 0);}
 #startPosesion {
-  background-color: rgb(0, 130, 95);}
+  background-color: rgb(0, 130, 95);
+  padding: 1vw 0.5vw;
+}
 #stopPosesion {
-  background-color: rgb(180, 35, 35);}
+  background-color: rgb(180, 35, 35);
+  padding: 1vw 0.5vw;
+}
+#editPosesion {
+  padding: 1vw 0.5vw;
+}
 #resetPosesion {
-  background-color: rgb(205, 155, 0);}
+  background-color: rgb(205, 155, 0);
+  font-size: 2vw;
+  padding: 2vw 3vw;
+  position: absolute;
+  bottom: 0;     /* Pegado a la parte inferior del contenedor */
+  left: -10vw;
+  bottom: -4vw;
+  transform: translateY(-50%);  /* Lo sube hacia arriba */
+  z-index: 10;
+}
 button:hover, #startPartido:hover, #resetPartido:hover, #stopPartido:hover,
 #startPosesion:hover, #resetPosesion:hover, #stopPosesion:hover {
   background-color: rgb(0, 85, 180);}
