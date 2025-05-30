@@ -60,11 +60,16 @@ section {
   justify-content: center;
   align-items: center;}
 .marcador-botones {
+  font-size: 2.5vw;
+  padding: 0.3vw;
+  border-radius: 1vw;
+  margin-right: 1vw;
+  flex: 1;
+  min-width: 0;
   flex: 0 0 20%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0 1vw;}
+  align-items: center;}
 #resultadoA, #resultadoB {
   font-size: 12vw;}
 .equipo-marcador button {
