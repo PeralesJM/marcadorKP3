@@ -21,20 +21,26 @@ app.get("/index_pc.html", (req, res) => {                    // Acceso a index_p
   } else {
     res.send("Acceso denegado. Contraseña incorrecta.");}});
 
-// GUARDAR ESTADO MARCADOR
-let estado = {
-  nombres: { A: "", B: "" },
-  goles: { A: 0, B: 0 },
-  tiempoPartido: 600,
-  tiempoJuego: 1,
-  tiempoPosesion: 60,
-  pausaTarjetas: false,
-  goleadores: { A: {}, B: {} },
-  tarjetas: {
-    A: { amarilla: [], roja: [], verde: [] },
-    B: { amarilla: [], roja: [], verde: [] }}};
-
 // FUNCIONES
+function obtenerEstadoInicial(prevEstado = {}) {
+  if (prevEstado?.intervaloPartido) clearInterval(prevEstado.intervaloPartido);
+  if (prevEstado?.intervaloPosesion) clearInterval(prevEstado.intervaloPosesion);
+  return { nombres: { A: "", B: "" },
+           goles: { A: 0, B: 0 },
+           tiempoPartido: 600,
+           intervaloPartido: null,
+           tiempoJuego: 1,
+           tiempoPosesion: 60,
+           intervaloPosesion: null,
+           pausaTarjetas: false,
+           goleadores: { A: {}, B: {} },
+           contadorTarjetas: { A: { amarilla: 0, roja: 0, verde: 0 },
+                               B: { amarilla: 0, roja: 0, verde: 0 }},
+           tarjetas: { A: { amarilla: [], roja: [], verde: [] },
+                       B: { amarilla: [], roja: [], verde: [] }}};}
+
+let estado = obtenerEstadoInicial();
+
 async function guardarEstadoEnBD() {
   const { error } = await supabase
     .from('marcador_tb')
@@ -44,12 +50,12 @@ async function guardarEstadoEnBD() {
       equipo_b: estado.nombres.B,
       resultado_a: estado.goles.A,
       resultado_b: estado.goles.B,
-      rojas_a: JSON.stringify(estado.tarjetas.A.roja),
-      rojas_b: JSON.stringify(estado.tarjetas.B.roja),
-      amarillas_a: JSON.stringify(estado.tarjetas.A.amarilla),
-      amarillas_b: JSON.stringify(estado.tarjetas.B.amarilla),
-      verdes_a: JSON.stringify(estado.tarjetas.A.verde),
-      verdes_b: JSON.stringify(estado.tarjetas.B.verde),
+      rojas_a: estado.contadorTarjetas?.A.roja || 0,
+      rojas_b: estado.contadorTarjetas?.B.roja || 0,
+      amarillas_a: estado.contadorTarjetas?.A.amarilla || 0,
+      amarillas_b: estado.contadorTarjetas?.B.amarilla || 0,
+      verdes_a: estado.contadorTarjetas?.A.verde || 0,
+      verdes_b: estado.contadorTarjetas?.B.verde || 0,
       tiempo: estado.tiempoPartido,
       fecha: new Date()}]);}
 
@@ -63,14 +69,19 @@ async function cargarEstadoDesdeBD() {
     estado = {
       nombres: { A: data.equipo_a, B: data.equipo_b },
       goles: { A: data.resultado_a, B: data.resultado_b },
-      tiempoPartido: data.tiempo ,
-      tarjetas: {
-        A: { roja: JSON.parse(data.rojas_a || "[]"),
-             amarilla: JSON.parse(data.amarillas_a || "[]"),
-             verde: JSON.parse(data.verdes_a || "[]"),},
-        B: { roja: JSON.parse(data.rojas_b || "[]"),
-             amarilla: JSON.parse(data.amarillas_b || "[]"),
-             verde: JSON.parse(data.verdes_b || "[]"),}},};
+      tiempoPartido: data.tiempo,
+      pausaTarjetas: false,
+      tiempoJuego: 1,
+      tiempoPosesion: 60,
+      goleadores: { A: {}, B: {} },
+      tarjetas: { A: { roja: [], amarilla: [], verde: [] },
+                  B: { roja: [], amarilla: [], verde: [] }},
+      contadorTarjetas: { A: { roja: data.rojas_a || 0,
+                               amarilla: data.amarillas_a || 0,
+                               verde: data.verdes_a || 0},
+                          B: { roja: data.rojas_b || 0,
+                               amarilla: data.amarillas_b || 0,
+                               verde: data.verdes_b || 0}}};
     return estado;}
   return null;}
 (async () => {
@@ -82,8 +93,7 @@ async function cargarEstadoDesdeBD() {
 io.on("connection", (socket) => {                            // Se ejecuta cuando un cliente se conecta al servidor a través de Socket.io
   console.log("Nuevo cliente conectado");
   
-  socket.on("solicitarEstado", () => {
-    socket.emit("estadoCompleto", estado);});
+  socket.on("solicitarEstado", () => socket.emit("estadoCompleto", estado));
 
   socket.on('nombreEquipo', (data) => {
     estado.nombres[data.equipo] = data.nombre;
@@ -96,12 +106,9 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
     guardarEstadoEnBD();});
 
   socket.on("goleador", ({ equipo, nombre }) => {
-    if (!estado.goleadores[equipo][nombre]) {
-      estado.goleadores[equipo][nombre] = 1;
-    } else {
-      estado.goleadores[equipo][nombre]++;}
-  socket.broadcast.emit("goleador", { equipo, nombre, goles: estado.goleadores[equipo][nombre] });
-  guardarEstadoEnBD();});
+    estado.goleadores[equipo][nombre] = (estado.goleadores[equipo][nombre] || 0) + 1;
+    socket.broadcast.emit("goleador", { equipo, nombre, goles: estado.goleadores[equipo][nombre] });
+    guardarEstadoEnBD();});
 
   socket.on("cronometroPartido", (data) => {
     estado.tiempoPartido = data.tiempo;
@@ -129,13 +136,15 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
     guardarEstadoEnBD();});
   
   socket.on("tarjeta", (data) => {                                     // Gestión de tarjetas
-    const { equipo, tipo, operacion, nombre } = data;
+    const { equipo, tipo, operacion, nombre, conteo } = data;
     if (operacion === "mas") {                                         // Añade tarjetas con la operación "más"
       estado.tarjetas[equipo][tipo].push({
          nombre: nombre || tipo.toUpperCase(),
          timestamp: Date.now()});
     } else if (operacion === "menos") {
         estado.tarjetas[equipo][tipo].pop();}
+    if (conteo) {
+      estado.contadorTarjetas = conteo;}
     socket.broadcast.emit("tarjeta", data);
     guardarEstadoEnBD();});
   
@@ -144,16 +153,7 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
 
   socket.on("reiniciarMarcador", () => {                               // Reinicio marcador
     console.log("Marcador reiniciado desde el panel de control");
-    estado = {
-      nombres: { A: "", B: "" },
-      goles: { A: 0, B: 0 },
-      tiempoPartido: 600,
-      tiempoJuego: 1,
-      tiempoPosesion: 60,
-      goleadores: { A: {}, B: {} },
-      tarjetas: {
-        A: { amarilla: [], roja: [], verde: [] },
-        B: { amarilla: [], roja: [], verde: [] }}};
+    estado = obtenerEstadoInicial(estado);
     io.emit("estadoCompleto", estado);                                 // Notifica a todos los clientes para actualizar el estado
     guardarEstadoEnBD();});  
 
@@ -165,26 +165,19 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
         equipo_b: estado.nombres.B,
         resultado_a: estado.goles.A,
         resultado_b: estado.goles.B,
-        rojas_a: estado.tarjetas.A.roja.length,
-        rojas_b: estado.tarjetas.B.roja.length,
-        amarillas_a: estado.tarjetas.A.amarilla.length,
-        amarillas_b: estado.tarjetas.B.amarilla.length,
-        verdes_a: estado.tarjetas.A.verde.length,
-        verdes_b: estado.tarjetas.B.verde.length,
+        rojas_a: estado.contadorTarjetas.A.roja,
+        rojas_b: estado.contadorTarjetas.B.roja,
+        amarillas_a: estado.contadorTarjetas.A.amarilla,
+        amarillas_b: estado.contadorTarjetas.B.amarilla,
+        verdes_a: estado.contadorTarjetas.A.verde,
+        verdes_b: estado.contadorTarjetas.B.verde,
+        tiempo: estado.tiempo,
         fecha: new Date()}]);
     if (error) {
       console.error("❌ Error al guardar el partido:", error.message);
     } else {
       console.log("✅ Partido guardado correctamente en la base de datos");}   
-    estado = {                                                                // Se reinicia el marcador automáticamente tras finalizar
-      nombres: { A: "", B: "" },
-      goles: { A: 0, B: 0 },
-      tiempoPartido: 600,
-      tiempoJuego: 1,
-      tiempoPosesion: 60,
-      tarjetas: {
-        A: { amarilla: [], roja: [], verde: [] },
-        B: { amarilla: [], roja: [], verde: [] }}};
+    estado = obtenerEstadoInicial(estado);
     io.emit("estadoCompleto", estado);
     guardarEstadoEnBD();});});
 

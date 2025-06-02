@@ -31,6 +31,7 @@ document.getElementById("golA-mas").onclick = () => {
       golesA++;
       actualizarResultado();
       socket.emit("goles", { equipo: "A", goles: golesA, goleador: nombre });
+      if (nombre !== "") socket.emit("goleador", { equipo: "A", nombre });
       input.remove();}});                                                      // Oculta el input después de enviar
   botones.insertBefore(input, botones.firstChild);                             // Inserta el input antes de los botones
   input.focus();};
@@ -51,6 +52,7 @@ document.getElementById("golB-mas").onclick = () => {
       golesB++;
       actualizarResultado();
       socket.emit("goles", { equipo: "B", goles: golesB, goleador: nombre });
+      if (nombre !== "") socket.emit("goleador", { equipo: "B", nombre });
       input.remove();}});                                                      // Oculta el input después de enviar
   botones.insertBefore(input, botones.firstChild);                             // Inserta el input antes de los botones
   input.focus();};
@@ -234,7 +236,7 @@ function manejarTarjeta(equipo, tipo, operacion) {                       // Aña
         const tiempo = document.createElement("span");
         tarjeta.appendChild(tiempo);
         iniciarCuentaAtras(tiempo, tarjeta);
-        socket.emit('tarjeta', { equipo, tipo, operacion: "mas", nombre: nombre.textContent });}});
+        socket.emit('tarjeta', { equipo, tipo, operacion: "mas", nombre: nombre.textContent, conteo: contadorTarjetas });}});
 
     tarjeta.addEventListener("click", () => {
       if (confirm("¿Deseas eliminar esta tarjeta?")) {
@@ -242,7 +244,7 @@ function manejarTarjeta(equipo, tipo, operacion) {                       // Aña
         if (index !== -1) {
           lista.splice(index, 1);                                       // Eliminar de la lista
           tarjeta.remove();                                             // Eliminar visualmente
-          socket.emit('tarjeta', { equipo, tipo, operacion: "menos" });}}});
+          socket.emit('tarjeta', { equipo, tipo, operacion: "menos", conteo: contadorTarjetas });}}});
 
     tarjeta.appendChild(input);
     if (tipo === "roja") {extra.prepend(tarjeta);
@@ -261,7 +263,7 @@ function manejarTarjeta(equipo, tipo, operacion) {                       // Aña
     if (tarjeta) tarjeta.remove();
     contadorTarjetas[equipo][tipo]--;
     cantidad.textContent = contadorTarjetas[equipo][tipo];
-    socket.emit('tarjeta', { equipo, tipo, operacion: "menos" });}}
+    socket.emit('tarjeta', { equipo, tipo, operacion: "menos", conteo: contadorTarjetas });}}
 
 function iniciarCuentaAtras(span, contenedor) {
   let tiempo = 120;
@@ -302,6 +304,7 @@ socket.on('goles', (data) => {
   if (data.equipo === 'A') golesA = data.goles;
   if (data.equipo === 'B') golesB = data.goles;
   actualizarResultado();});
+socket.emit("goleador", { equipo, nombre });
 socket.on('cronometroPartido', (data) => {
   tiempoPartido = data.tiempo;
   actualizarCronoPartido();});

@@ -31,6 +31,8 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: rgb(60, 60, 85);
+  border-radius: 1.5vw;
   padding: 1vw;}
 #nombreEquipoA, #nombreEquipoB {
   font-size: 3vw;
@@ -61,25 +63,29 @@ section {
   border-top: 0.3vw solid white;
   margin: 0.3vw 0;}
 
-.goleadores-equipo {
-  width: 100%;
-  padding: 0.5vw 1vw;
-  background-color: #222; /* un fondo oscuro para visibilidad */
-  color: white;
-  min-height: 4em;}
-
-.goleador-item {
-  font-size: 1.2em;
-  margin: 0.2em 0;}
-
 /* TARJETAS */
 .expulsiones-wrapper {
   display: flex;
-  flex: 1;
+  flex: 1 1 auto;
   gap: 2vw;
-  overflow-y: auto;}
+  min-height: 0;
+  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;}
 .goleadores-equipo, .expulsiones-extra {
-  flex: 1 1 45%; }
+  background-color: rgb(60, 60, 85);
+  border-radius: 1.5vw;
+  width: 100%;
+  padding: 0.5vw 1vw;
+  min-height: 4em;
+  flex: 1 1 45%;
+  box-sizing: border-box;
+  display: flex;
+  max-height: 100%;
+  overflow-y: auto;
+  flex-direction: column;}
+.goleador-item {
+  font-size: 1.5vw;}
 .te {
   font-size: 1.2vw;}
 .tarjeta-nombre {
