@@ -34,6 +34,7 @@ function obtenerEstadoInicial(prevEstado = {}) {
            intervaloPosesion: null,
            pausaTarjetas: false,
            goleadores: { A: {}, B: {} },
+           historialGoleadores: { A: [], B: []},                                   // Orden de goleadores, para poder eliminar el último
            contadorTarjetas: { A: { amarilla: 0, roja: 0, verde: 0 },
                                B: { amarilla: 0, roja: 0, verde: 0 }},
            tarjetas: { A: { amarilla: [], roja: [], verde: [] },
@@ -42,6 +43,16 @@ function obtenerEstadoInicial(prevEstado = {}) {
 let estado = obtenerEstadoInicial();
 
 async function guardarEstadoEnBD() {
+  const construirGoleadores = (equipo) => {
+    const resultado = {};
+    const goleadores = estado.goleadores[equipo];
+    for (const nombre in goleadores) {
+      resultado[nombre] = {
+        goles: goleadores[nombre].length,
+        tiempos: goleadores[nombre]};}
+    return resultado;};
+  const goleadoresA = construirGoleadores("A");
+  const goleadoresB = construirGoleadores("B");
   const { error } = await supabase
     .from('marcador_tb')
     .upsert([{
@@ -57,7 +68,9 @@ async function guardarEstadoEnBD() {
       verdes_a: estado.contadorTarjetas?.A.verde || 0,
       verdes_b: estado.contadorTarjetas?.B.verde || 0,
       tiempo: estado.tiempoPartido,
-      fecha: new Date()}]);}
+      fecha: new Date(),
+      goleadores_a: goleadoresA,
+      goleadores_b: goleadoresB}]);}
 
 async function cargarEstadoDesdeBD() {
   const { data, error } = await supabase
@@ -106,9 +119,35 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
     guardarEstadoEnBD();});
 
   socket.on("goleador", ({ equipo, nombre }) => {
-    estado.goleadores[equipo][nombre] = (estado.goleadores[equipo][nombre] || 0) + 1;
-    socket.broadcast.emit("goleador", { equipo, nombre, goles: estado.goleadores[equipo][nombre] });
+    if (equipo !== "A" && equipo !== "B") return;
+    const tiempoReal = 600 - estado.tiempoPartido;          // Calcular el tiempo real incluyendo el offset por el tiempo de juego
+    const offsetMinutos = (estado.tiempoJuego - 1) * 10;
+    const totalSegundos = tiempoReal + offsetMinutos * 60;
+    if (!estado.goleadores[equipo][nombre]) {               // Guardar el tiempo en segundos directamente
+      estado.goleadores[equipo][nombre] = [];}
+    estado.goleadores[equipo][nombre].push(totalSegundos);
+    if (!estado.historialGoleadores) estado.historialGoleadores = { A: [], B: [] };
+    if (!estado.historialGoleadores[equipo]) estado.historialGoleadores[equipo] = [];
+    estado.historialGoleadores[equipo].push(nombre);
+    socket.broadcast.emit("goleador", { equipo,
+                                        nombre,
+                                        goles: estado.goleadores[equipo][nombre].length,
+                                        tiempos: estado.goleadores[equipo][nombre],});
     guardarEstadoEnBD();});
+
+  socket.on("eliminarUltimoGoleador", ({ equipo }) => {
+    const historial = estado.historialGoleadores[equipo];
+    if (!historial || historial.length === 0) return;
+    const ultimo = historial.pop();
+    if (estado.goleadores[equipo][ultimo]) {
+      estado.goleadores[equipo][ultimo].pop();
+      if (estado.goleadores[equipo][ultimo].length === 0) {
+        delete estado.goleadores[equipo][ultimo];}
+      socket.broadcast.emit("goleador", { equipo,
+                                          nombre: ultimo,
+                                          goles: estado.goleadores[equipo][ultimo]?.length || 0,
+                                          tiempos: estado.goleadores[equipo][ultimo] || []});
+      guardarEstadoEnBD();}});
 
   socket.on("cronometroPartido", (data) => {
     estado.tiempoPartido = data.tiempo;
@@ -158,6 +197,16 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
     guardarEstadoEnBD();});  
 
   socket.on("finalizarPartido", async () => {
+    const construirGoleadores = (equipo) => {
+      const resultado = {};
+      const goleadores = estado.goleadores[equipo];
+      for (const nombre in goleadores) {
+        resultado[nombre] = {
+          goles: goleadores[nombre].length,
+          tiempos: goleadores[nombre]};}
+      return resultado;};
+    const goleadoresA = construirGoleadores("A");
+    const goleadoresB = construirGoleadores("B");
     const { error } = await supabase
       .from('marcador_tb')
       .insert([{
@@ -172,7 +221,9 @@ io.on("connection", (socket) => {                            // Se ejecuta cuand
         verdes_a: estado.contadorTarjetas.A.verde,
         verdes_b: estado.contadorTarjetas.B.verde,
         tiempo: estado.tiempo,
-        fecha: new Date()}]);
+        fecha: new Date(),
+        goleadores_a: goleadoresA,
+        goleadores_b: goleadoresB}]);
     if (error) {
       console.error("❌ Error al guardar el partido:", error.message);
     } else {

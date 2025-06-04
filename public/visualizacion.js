@@ -97,10 +97,17 @@ socket.on("estadoCompleto", (estado) => {
   ["A", "B"].forEach(equipo => {
     const goleadoresContenedor = document.getElementById(`goleadores${equipo}`);
     Array.from(goleadoresContenedor.querySelectorAll(".goleador-item")).forEach(el => el.remove());  // Borrar anteriores
-    Object.entries(estado.goleadores[equipo]).forEach(([nombre, goles]) => {                         // Mostrar goleadores
+    Object.entries(estado.goleadores[equipo]).forEach(([nombre, tiempos]) => {                         // Mostrar goleadores
       const item = document.createElement("div");
       item.className = "goleador-item";
-      item.textContent = `${nombre}: ${goles}`;
+      item.dataset.nombre = nombre;
+      const formatearTiempos = (tiempos) => {
+        return tiempos.map(segundos => {
+          let min = Math.floor(segundos / 60);
+          let seg = segundos % 60;
+          return `${min}:${seg.toString().padStart(2, '0')}`;
+        }).join(', ');};
+      item.textContent = `${nombre}: ${tiempos.length} (${formatearTiempos(tiempos)})`;
       goleadoresContenedor.appendChild(item);});});
   let min = Math.floor(estado.tiempoPartido / 60);
   let seg = estado.tiempoPartido % 60;
@@ -140,17 +147,27 @@ socket.on("nombreEquipo", (data) => {
 socket.on("goles", (data) => {
   document.getElementById(data.equipo === "A" ? "resultadoA" : "resultadoB").textContent = data.goles;});
 
-socket.on("goleador", ({ equipo, nombre, goles }) => {
+socket.on("goleador", ({ equipo, nombre, goles, tiempos }) => {
   const contenedor = document.getElementById(`goleadores${equipo}`);
   let existente = Array.from(contenedor.getElementsByClassName("goleador-item"))
-    .find(el => el.textContent.startsWith(nombre + ":"));
-  if (existente) {
-    existente.textContent = `${nombre}: ${goles}`;
+    .find(el => el.dataset.nombre === nombre);
+  const formatearTiempos = (tiempos) => {
+    return tiempos.map(segundos => {
+      let min = Math.floor(segundos / 60);
+      let seg = segundos % 60;
+      return `${min}:${seg.toString().padStart(2, '0')}`;
+    }).join(', ');};
+  if (goles === 0) {
+    if (existente) existente.remove();
   } else {
-    const nuevo = document.createElement("div");
-    nuevo.className = "goleador-item";
-    nuevo.textContent = `${nombre}: ${goles}`;
-    contenedor.appendChild(nuevo);}});
+    if (existente) {
+      existente.textContent = `${nombre}: ${goles} (${formatearTiempos(tiempos)})`;
+    } else {
+      const nuevo = document.createElement("div");
+      nuevo.className = "goleador-item";
+      nuevo.dataset.nombre = nombre;
+      nuevo.textContent = `${nombre}: ${goles} (${formatearTiempos(tiempos)})`;
+      contenedor.appendChild(nuevo);}}});
 
 socket.on("cronometroPartido", (data) => {
   let minutos = Math.floor(data.tiempo / 60);

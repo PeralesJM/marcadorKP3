@@ -30,13 +30,20 @@ document.getElementById("golA-mas").onclick = () => {
       const nombre = input.value.trim();
       golesA++;
       actualizarResultado();
-      socket.emit("goles", { equipo: "A", goles: golesA, goleador: nombre });
-      if (nombre !== "") socket.emit("goleador", { equipo: "A", nombre });
+      socket.emit("goles", { equipo: "A", goles: golesA });
+      if (nombre !== "") {
+        const tiempoGol = 600 - tiempoPartido;
+        socket.emit("goleador", { equipo: "A", nombre, tiempo: tiempoGol });}
       input.remove();}});                                                      // Oculta el input después de enviar
   botones.insertBefore(input, botones.firstChild);                             // Inserta el input antes de los botones
   input.focus();};
 
-document.getElementById("golA-menos").onclick = () => { if (golesA > 0) golesA--; actualizarResultado(); socket.emit('goles', { equipo: 'A', goles: golesA });};
+document.getElementById("golA-menos").onclick = () => {
+  if (golesA > 0) {
+    golesA--;
+    actualizarResultado();
+    socket.emit('goles', { equipo: 'A', goles: golesA });
+    socket.emit('eliminarUltimoGoleador', { equipo: 'A' });}};
 
 document.getElementById("golB-mas").onclick = () => {
   const botones = document.getElementById("botonesB");
@@ -51,13 +58,20 @@ document.getElementById("golB-mas").onclick = () => {
       const nombre = input.value.trim();
       golesB++;
       actualizarResultado();
-      socket.emit("goles", { equipo: "B", goles: golesB, goleador: nombre });
-      if (nombre !== "") socket.emit("goleador", { equipo: "B", nombre });
+      socket.emit("goles", { equipo: "B", goles: golesB });
+      if (nombre !== "") {
+        const tiempoGol = 600 - tiempoPartido;
+        socket.emit("goleador", { equipo: "B", nombre, tiempo: tiempoGol });}
       input.remove();}});                                                      // Oculta el input después de enviar
   botones.insertBefore(input, botones.firstChild);                             // Inserta el input antes de los botones
   input.focus();};
 
-document.getElementById("golB-menos").onclick = () => { if (golesB > 0) golesB--; actualizarResultado(); socket.emit('goles', { equipo: 'B', goles: golesB });};
+document.getElementById("golB-menos").onclick = () => {
+  if (golesB > 0) {
+    golesB--;
+    actualizarResultado();
+    socket.emit('goles', { equipo: 'B', goles: golesB });
+    socket.emit('eliminarUltimoGoleador', { equipo: 'B' });}};
 
 // Start partido
 document.getElementById("startPartido").onclick = () => {
@@ -307,6 +321,9 @@ socket.on('goles', (data) => {
 socket.emit("goleador", { equipo, nombre });
 socket.on('cronometroPartido', (data) => {
   tiempoPartido = data.tiempo;
+  let min = Math.floor(tiempoPartido / 60);
+  let seg = tiempoPartido % 60;
+  document.getElementById("tiempoPartido").textContent = `${min.toString().padStart(2, "0")}:${seg.toString().padStart(2, "0")}`;
   actualizarCronoPartido();});
 socket.on('cronometroPosesion', (data) => {
   tiempoPosesion = data.tiempo;
