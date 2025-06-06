@@ -85,7 +85,7 @@ section {
   overflow-y: auto;
   flex-direction: column;}
 .goleador-item {
-  font-size: 1.5vw;}
+  font-size: 2.5vw;}
 .te {
   font-size: 1.2vw;}
 .tarjeta-nombre {
@@ -95,7 +95,7 @@ section {
   padding: 0.7vw;
   border-radius: 1vw;
   margin: 0.4vw 0;
-  font-size: 1.4vw;
+  font-size: 2vw;
   font-weight: bold;
   color: white;}
 .tarjeta-nombre.roja {
@@ -149,7 +149,7 @@ section {
   border-radius: 2vw;
   padding: 1vw 3vw;
   outline: 0.3vw solid white;
-  color: white;}
+  color:  red;}
 #tiempoPosesion {
   font-size: 8vw;
   color: white;
