@@ -1,5 +1,5 @@
 // IMPORTACION MODULOS
-const servidorId = "server1";                                // Identificador del servidor
+const servidorId = "server3";                                // Identificador del servidor
 const express = require("express");                          // Framework para crear servidores web en Node.js
 const app = express();                                       // Crear instancia de aplicación app
 const http = require("http").createServer(app);              // Crear servidor HTTP usando esa instancia
@@ -13,7 +13,7 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey);        // Crear cliente de Supabase para leer y escribir datos con esa URL y contraseña
 
 // CONTRASEÑA
-const contrasena = "1234";
+const contrasena = "3456";
 app.get("/index_pc.html", (req, res) => {                    // Ruta GET para acceder a index_pc.html con contraseña
   const contraseñaUsuario = req.query.password;              // Añadir password
   if (contraseñaUsuario === contrasena) {                    // Verificar si password coincide con la contraseña esperada
@@ -55,7 +55,7 @@ async function guardarEstadoEnBD() {                                            
   const { error } = await supabase
     .from('marcador_tb')
     .upsert([{                                                                    // Actualizar el estado de la tabla "marcador_tb"
-      id: 1,                                                                      // Solo se gestiona un registro con id=1
+      id: 3,                                                                      // Solo se gestiona un registro con id=1
       equipo_a: estado.nombres.A,
       equipo_b: estado.nombres.B,
       resultado_a: estado.goles.A,
@@ -75,7 +75,7 @@ async function cargarEstadoDesdeBD() {                                          
   const { data, error } = await supabase
     .from('marcador_tb')
     .select('*')
-    .eq('id', 1)
+    .eq('id', 3)
     .single();
   if (data) {                                                                     // Reconstruir el estado local si se encuentra información en la BD
     estado = {
@@ -231,5 +231,5 @@ io.on("connection", (socket) => {                                               
     io.emit("estadoCompleto", estado);
     guardarEstadoEnBD();});});
 
-const port = process.env.PORT || 3001;                                         // Arrancar el servidor en ese puerto
+const port = process.env.PORT || 3003;                                         // Arrancar el servidor en ese puerto
 http.listen(port, () => {console.log(`Servidor en puerto ${port}`);});
