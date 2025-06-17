@@ -1,55 +1,52 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html>                                                           <!--Documento HTML5-->             
+<html lang="es">                                                          <!--En español-->
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="google" content="notranslate">
-  <title>Panel de Control</title>
-  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>-->
-  <link rel="stylesheet" href="style2.css">
+  <meta charset="UTF-8">                                                  <!--Permite caracteres especiales-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <!--Diseño responsivo, se adapta al ancho del dispositivo-->
+  <meta name="google" content="notranslate">                              <!--Evita que google traduzca la página automáticamente-->
+  <title>Panel de Control</title>                                         <!--Título que aparecerá en la pestaña del navegador-->
+  <link rel="stylesheet" href="style2.css">                               <!--Enlaza la hoja de estilos "style2.css"-->
 </head>
 <body>
-  <div id="panel">
+  <div id="panel">                                                        <!--Contenedor principal-->
 
-    
+
     <!-- Columna Equipo A -->
-    <section id="equipoA-container">
-      <div class="equipo-header">
+    <section id="equipoA-container">                                      <!--Columna izquierda: Equipo A-->
+      <div class="equipo-header">                                         <!--Sección que contiene el nombre del equipo A-->
         <span id="nombreEquipoA"></span>
       </div>
-      <div class="equipo-marcador">
-        <div class="marcador-puntos"><span id="resultadoA">0</span></div>
+      <div class="equipo-marcador">                                       <!--Sección que contiene el resultado del equipo A-->
+        <div class="marcador-puntos"><span id="resultadoA">0</span></div> <!--Inicia en 0-->
       </div>
-      <hr class="linea">
-      <div class="expulsiones-wrapper">
-        <div class="goleadores-equipo" id="goleadoresA">
-          <h3 class="te">GOLEADORES</h3>
+      <hr class="linea">                                                  <!--Línea que separa el resultado de la sección de goleadores y expulsiones-->
+      <div class="expulsiones-wrapper">                                   <!--Sección que engloba la sección de goleadores y de expulsiones-->
+        <div class="goleadores-equipo" id="goleadoresA">                  <!--Sección que contiene los goleadores del equipo A-->
+          <h3 class="te">GOLEADORES</h3>                                  <!--Encabezado de la sección de goleadores del equipo A-->
         </div>
-        <div class="expulsiones-extra" id="expulsionesExtraA">
-          <h3 class="te">EXPULSIONES</h3>
+        <div class="expulsiones-extra" id="expulsionesExtraA">            <!--Sección que contiene las expulsiones del equipo A-->
+          <h3 class="te">EXPULSIONES</h3>                                 <!--Encabezado de la sección de expulsiones del equipo A-->
         </div>
       </div>
     </section>
-
 
     <!-- Columna Central: Cronómetros -->
-    <section id="cronometro-container">
-      <div id="cronometro-partido">
-        <span id="tiempoPartido">10:00</span>
+    <section id="cronometro-container">                                   <!--Columna central: Cronómetros-->
+      <div id="cronometro-partido">                                       <!--Sección que contiene el cronómetro del partido-->
+        <span id="tiempoPartido">10:00</span>                             <!--Inicia en 10 minutos : 00 segundos-->
       </div>
-      <span id="tiempo-juego">PRIMER TIEMPO</span>
-      <div id="posesionQR">
-        <div id="posesion-container">
-          <h3>POSESION</h3>
-          <span id="tiempoPosesion">60</span>
+      <span id="tiempo-juego">PRIMER TIEMPO</span>                        <!--Span que contiene el tiempo de juego. Inicia en "Primer tiempo"-->
+      <div id="posesionQR">                                               <!--Sección que engloba el cronómetro de posesión y el código QR-->
+        <div id="posesion-container">                                     <!--Sección que contiene el cronómetro de posesión-->
+          <h3>POSESION</h3>                                               <!--Encabezado del cronómetro de posesión-->
+          <span id="tiempoPosesion">60</span>                             <!--Tiempo de posesión. Inicia en 60 segundos-->
         </div>
-        <div id="QR"><img src="QR_1.png"></div>
+        <div id="QR"><img src="QR_1.png"></div>                           <!--Sección que contiene el código QR-->
       </div>
     </section>
 
-
     <!-- Columna Equipo B -->
-    <section id="equipoB-container">
+    <section id="equipoB-container">                                      <!--Columna derecha: Equipo B. Misma estructura-->
       <div class="equipo-header">
         <span id="nombreEquipoB"></span>
       </div>
@@ -67,7 +64,7 @@
       </div>
     </section>
   </div>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="visualizacion.js"></script>
+  <script src="/socket.io/socket.io.js"></script>                         <!--Importa la biblioteca de Socket.io, permite comunicación con el servidor en tiempo real-->
+  <script src="visualizacion.js"></script>                                <!--Importa el script "visualizacion.js" que contiene la lógica de la interfaz-->
 </body>
 </html>

@@ -1,41 +1,40 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Panel de Control</title>
-  <link rel="stylesheet" href="style_pc.css">
+<html lang="es">                                                          <!--Documento html en español-->
+<head>                                                                    <!--head: Contiene los metadatos de la página-->
+  <meta charset="UTF-8">                                                  <!--Permite incorporar caracteres especiales como tildes y ñ-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <!--Permite que sea responsivo en cualquier pantalla-->
+  <title>Panel de Control</title>                                         <!--Título que aparece en la pestaña del navegador-->
+  <link rel="stylesheet" href="style_pc.css">                             <!--Link al archivo de estilos "style_pc.css"-->
 </head>
-<body>
-  <div id="panel">
+<body>                                                                    <!--body: Parte de la página web que se visualiza-->
+  <div id="panel">                                                        <!--Contenedor principal donde vamos a agrupar 3 columnas principales-->
   
-    
     <!-- Columna Equipo A -->
-    <section id="equipoA-container">
-      <div class="equipo-header">
-        <input type="text" id="equipoA">
+    <section id="equipoA-container">                                      <!--Primera columna, referente al equipo A-->
+      <div class="equipo-header">                                         <!--Contenedor para nombre de equipo A-->
+        <input type="text" id="equipoA">                                  <!--Campo editable para ingresar el nombre del equipo A-->
       </div>
-      <div class="equipo-marcador">
-        <div class="marcador-puntos"><span id="resultadoA">0</span>
+      <div class="equipo-marcador">                                       <!--Contenedor global para resultado equipo A y su manejo-->
+        <div class="marcador-puntos"><span id="resultadoA">0</span>       <!--Contiene el resultado. Inicia en 0-->
         </div>
-        <div class="marcador-botones" id="botonesA">
-          <button id="golA-mas">+</button>
-          <button id="golA-menos">-</button>
+        <div class="marcador-botones" id="botonesA">                      <!--Contenedor para el manejo de resultado equipo A-->
+          <button id="golA-mas">+</button>                                <!--Botón para sumar goles-->
+          <button id="golA-menos">-</button>                              <!--Botón para restar goles-->
         </div>
       </div>
-      <hr class="linea">
-      <div class="expulsiones-wrapper">
-        <div class="expulsiones-equipo" id="expulsionesA">
-          <h3>Tarjetas</h3>
-          <div class="tarjeta roja">
-            <span>ROJAS: </span>
-            <div class="grupo-botones">
-              <button id="rojaA-mas">+</button>
-              <button id="rojaA-menos">-</button>
-              <span id="rojaA-cantidad">0</span>
+      <hr class="linea">                                                  <!--Línea que separa resultado de tarjetas-->
+      <div class="expulsiones-wrapper">                                   <!--Contenedor global para las tarjetas equipo A, su manejo y expulsiones-->
+        <div class="expulsiones-equipo" id="expulsionesA">                <!--Contenedor para manejo de tarjetas equipo A-->
+          <h3>Tarjetas</h3>                                               <!--Encabezado apartado tarjetas-->
+          <div class="tarjeta roja">                                      <!--Contenedor para tarjetas rojas-->
+            <span>ROJAS: </span>                                          <!--Encabezado tarjetas rojas-->
+            <div class="grupo-botones">                                   <!--Contenedor para botones de tarjetas rojas-->
+              <button id="rojaA-mas">+</button>                           <!--Botón sumar tarjeta roja-->
+              <button id="rojaA-menos">-</button>                         <!--Botón restar tarjeta roja-->
+              <span id="rojaA-cantidad">0</span>                          <!--Contador tarjetas rojas. Inicia en 0-->
             </div>
           </div>
-          <div class="tarjeta amarilla">
+          <div class="tarjeta amarilla">                                  <!--Contenedor tarjetas amarillas. Misma estructura-->
             <span>AMARILLAS: </span>
             <div class="grupo-botones">
               <button id="amarillaA-mas">+</button>
@@ -43,7 +42,7 @@
               <span id="amarillaA-cantidad">0</span>
             </div>
           </div>
-          <div class="tarjeta verde">
+          <div class="tarjeta verde">                                     <!--Contenedor tarjetas verdes. Misma estructura-->
             <span>VERDES: </span>
             <div class="grupo-botones">
               <button id="verdeA-mas">+</button>
@@ -52,56 +51,53 @@
             </div>
           </div>
         </div>
-        <div class="expulsiones-extra" id="expulsionesExtraA">
+        <div class="expulsiones-extra" id="expulsionesExtraA">            <!--Contenedor para las expulsiones con cuenta atrás de 2 minutos-->
         </div>
       </div>
     </section>
-
 
     <!-- Columna Central: Cronómetros -->
-    <section id="cronometro-container">
-      <div id="cronometro-partido">
-        <h2>Cronómetro Partido</h2>
-        <span id="tiempoPartido">10:00</span>
-        <div class="botones-cronometro">
-          <div class="grupo-izquierda">
-            <button id="startPartido">Start</button>
-            <button id="stopPartido">Stop</button>
+    <section id="cronometro-container">                                   <!--Segunda columna, referente a los cronómetros-->
+      <div id="cronometro-partido">                                       <!--Contenedor para el cronómetro del partido y su manejo-->
+        <h2>Cronómetro Partido</h2>                                       <!--Encabezado del cronómetro del partido-->
+        <span id="tiempoPartido">10:00</span>                             <!--Cuenta atrás del cronómetro de partido. Inicia en 10:00 (minutos:segundos)-->
+        <div class="botones-cronometro">                                  <!--Contenedor para el manejo del cronómetro de partido-->
+          <div class="grupo-izquierda">                                   <!--Contenedor para botones a la izquierda-->
+            <button id="startPartido">Start</button>                      <!--Botón de iniciar/reanudar-->
+            <button id="stopPartido">Stop</button>                        <!--Botón de parar-->
           </div>
-          <div class="grupo-derecha">
-            <button id="editPartido">Edit</button>
-            <button id="resetPartido">Reset</button>
+          <div class="grupo-derecha">                                     <!--Contenedor para botones a la derecha-->
+            <button id="editPartido">Edit</button>                        <!--Botón de editar-->
+            <button id="resetPartido">Reset</button>                      <!--Botón de reseteo-->
           </div>
         </div>
-        <input type="hidden" id="editarPartido">
       </div>
-      <select id="part">
-        <option value="1">PRIMER TIEMPO</option>
-        <option value="2">SEGUNDO TIEMPO</option>
-        <option value="3">PRORROGA</option>
-        <option value="reiniciar">🗘 Reiniciar marcador</option>
-        <option value="finalizar">⏹ Finalizar partido</option>
+      <select id="part">                                                  <!--Botón selector de tiempo de partido y otras funciones-->
+        <option value="1">PRIMER TIEMPO</option>                          <!--Primer tiempo-->
+        <option value="2">SEGUNDO TIEMPO</option>                         <!--Segundo tiempo-->
+        <option value="3">PRORROGA</option>                               <!--Prórroga-->
+        <option value="reiniciar">🗘 Reiniciar marcador</option>          <!--Botón de reinicio de marcador. Se reinician todos los vaolres al estado inicial-->
+        <option value="finalizar">⏹ Finalizar partido</option>           <!--Botón de finalizar partido. Se reinician valores y quedan guardados en base de datos-->
       </select>
       
-      <div id="posesion-container">
-        <h3>Cronómetro Posesión</h3>
-        <span id="tiempoPosesion">60</span>
-        <div class="botones-cronometro">
-          <div class="grupo-izquierda">
-            <button id="startPosesion">Start</button>
-            <button id="stopPosesion">Stop</button>
-            <button id="editPosesion">Edit</button>
+      <div id="posesion-container">                                       <!--Contenedor del cronómetro de posesión y su manejo-->
+        <h3>Cronómetro Posesión</h3>                                      <!--Encabezado del cronómetro de posesión-->
+        <span id="tiempoPosesion">60</span>                               <!--Tiempo de posesión. Cuenta atrás que inicia en 60 segundos-->
+        <div class="botones-cronometro">                                  <!--Contenedor para manejo del cronómetro de posesión-->
+          <div class="grupo-izquierda">                                   <!--Contenedor para botones de la izquierda-->
+            <button id="startPosesion">Start</button>                     <!--Botón de iniciar/reanudar-->
+            <button id="stopPosesion">Stop</button>                       <!--Botón de parar-->
+            <button id="editPosesion">Edit</button>                       <!--Botón de editar-->
           </div>
-          <div class="grupo-derecha">
-            <button id="resetPosesion">Reset</button>
+          <div class="grupo-derecha">                                     <!--Contenedor para botones de la izquierda-->
+            <button id="resetPosesion">Reset</button>                     <!--Botón de reseteo-->
           </div>
         </div>
       </div>
     </section>
 
-
     <!-- Columna Equipo B -->
-    <section id="equipoB-container">
+    <section id="equipoB-container">                                      <!--Tercera columna, referente al equipo B. Misma estructura que equipo A-->
       <div class="equipo-header">
         <input type="text" id="equipoB">
       </div>
@@ -147,7 +143,8 @@
       </div>
     </section>
   </div>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="script_pc.js"></script>
+
+  <script src="/socket.io/socket.io.js"></script>                         <!--Script para la comunicación en tiempo real con el servidor-->
+  <script src="script_pc.js"></script>                                    <!--Enlace con archivo script_pc.js que lleva la lógica del panel-->
 </body>
 </html>

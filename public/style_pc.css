@@ -29,7 +29,7 @@ section {
 #cronometro-partido, #posesion-container {
   flex-shrink: 0;}
 
-/* APARTADO ESTRUCTURA */
+/* APARTADO EQUIPOS */
 #equipoA-container .equipo-header, #equipoB-container .equipo-header {
   flex: 0 0 15%;
   display: flex;
@@ -42,8 +42,6 @@ section {
   align-items: center;
   flex-direction: column;
   justify-content: center;}
-
-/* APARTADO EQUIPOS */
 .equipo-header input {
   font-size: 3vw;
   text-align: center;
@@ -204,8 +202,7 @@ button {
 .grupo-izquierda, .grupo-derecha {
   display: flex;}
 .grupo-derecha {
-  position: relative;
-}
+  position: relative;}
 #startPartido, #stopPartido, #editPartido, #resetPartido, #startPosesion, #stopPosesion, #editPosesion, #resetPosesion {
   padding: 1vw 1vw;}
 #startPartido {
@@ -216,15 +213,12 @@ button {
   background-color: rgb(205, 155, 0);}
 #startPosesion {
   background-color: rgb(0, 130, 95);
-  padding: 1vw 0.5vw;
-}
+  padding: 1vw 0.5vw;}
 #stopPosesion {
   background-color: rgb(180, 35, 35);
-  padding: 1vw 0.5vw;
-}
+  padding: 1vw 0.5vw;}
 #editPosesion {
-  padding: 1vw 0.5vw;
-}
+  padding: 1vw 0.5vw;}
 #resetPosesion {
   background-color: rgb(205, 155, 0);
   font-size: 2vw;
@@ -234,8 +228,7 @@ button {
   left: -10vw;
   bottom: -4vw;
   transform: translateY(-50%);  /* Lo sube hacia arriba */
-  z-index: 10;
-}
+  z-index: 10;}
 button:hover, #startPartido:hover, #resetPartido:hover, #stopPartido:hover,
 #startPosesion:hover, #resetPosesion:hover, #stopPosesion:hover {
   background-color: rgb(0, 85, 180);}

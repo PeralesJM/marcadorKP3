@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  marcador:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - SUPABASE_URL=https://furnvnscbdlzwzmdqvzl.supabase.co
+      - SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1cm52bnNjYmRsend6bWRxdnpsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzIwNzE2NiwiZXhwIjoyMDYyNzgzMTY2fQ.eWz3ghMP_f_TMipQsRur_eRP_b9zzde7HLSFsTp2UwI
+    volumes:
+      - .:/app
+    restart: unless-stopped
