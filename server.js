@@ -7,10 +7,10 @@ const io = require("socket.io")(http);                       // Conectar Socket.
 app.use(express.static("public"));                           // Acceso a archivos estáticos desde "public"
 
 // CONEXION BASE DE DATOS
-const { createClient } = require('@supabase/supabase-js');   // Importar función createClient para interactuar con la base de datos de Supabase
-const supabaseUrl = process.env.SUPABASE_URL;                // Extraer URL del proyecto para conectarse a la BD
-const supabaseKey = process.env.SUPABASE_KEY;                // Extraer contraseña
-const supabase = createClient(supabaseUrl, supabaseKey);     // Crear cliente de Supabase para leer y escribir datos con esa URL y contraseña
+const { createClient } = require('@supabase/supabase-js');      // Importar función createClient para interactuar con la base de datos de Supabase
+const supabaseUrl = "https://furnvnscbdlzwzmdqvzl.supabase.co"; // Extraer URL del proyecto para conectarse a la BD
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1cm52bnNjYmRsend6bWRxdnpsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzIwNzE2NiwiZXhwIjoyMDYyNzgzMTY2fQ.eWz3ghMP_f_TMipQsRur_eRP_b9zzde7HLSFsTp2UwI";
+const supabase = createClient(supabaseUrl, supabaseKey);        // Crear cliente de Supabase para leer y escribir datos con esa URL y contraseña
 
 // CONTRASEÑA
 const contrasena = "1234";
